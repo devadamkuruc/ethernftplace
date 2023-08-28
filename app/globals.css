@@ -1,27 +1,104 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Nunito:wght@200;300;400;500;600;700;800;900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+::-webkit-scrollbar {
+  width: 4px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.eth-gradient-1 {
+  background: linear-gradient(101.12deg, #3b82f6 0%, #3b3bb0 100%);
+}
+.eth-gradient-2 {
+  background: linear-gradient(101.12deg, #ff0099 0%, #3b3bb0 100%);
+}
+
+.white-bg {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.black-bg {
+  background: rgba(0, 0, 0, 1);
+}
+
+.animated {
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation-duration: 500ms;
+  animation-duration: 500ms;
+}
+
+.fadeIn {
+  -webkit-animation-name: fadeIn;
+  animation-name: fadeIn;
+}
+
+.flexCenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flexBetween {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flexStart {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.flexStartCenter {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.flexEndCenter {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.flexBetweenStart {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.flexCenterStart {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-}
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  to {
+    opacity: 1;
+  }
 }
