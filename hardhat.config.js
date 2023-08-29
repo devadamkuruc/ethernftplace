@@ -1,5 +1,5 @@
-import fs from "fs";
-import "@nomicfoundation/hardhat-toolbox";
+const fs = require("fs");
+require("@nomicfoundation/hardhat-toolbox");
 
 const privateKey = fs.readFileSync(".secret").toString().trim();
 
