@@ -8,17 +8,17 @@ const HeroSection = () => {
   return (
     <section className="flex h-screen">
       <div className="flex flex-col flex-1 justify-center">
-        <h2 className="font-bold text-5xl text-white mb-6">
+        <h2 className="font-bold text-5xl text-white mb-4">
           Explore a Universe of Unique Digital Collectibles
         </h2>
-        <p className="text-base text-white my-6 mb-3">
+        <p className="text-base text-white mt-2">
           The future of art is here, and it's digitized. Join us in celebrating
           the boundless creativity of artists who are using NFTs to redefine the
           concept of ownership and transform the way we experience art.
         </p>
         <Button
           btnName="Start Exploring"
-          classStyles="rounded-md self-start mt-3"
+          classStyles="rounded-md self-start mt-8"
         />
       </div>
       <div className="flex flex-1 justify-center items-center">

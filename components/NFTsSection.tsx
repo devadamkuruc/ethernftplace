@@ -75,7 +75,7 @@ const nfts = [
 
 const NFTsSection = () => {
   return (
-    <section className="w-full mt-36">
+    <section className="w-full my-36">
       <div className="mb-6">
         <h3 className="text-white font-semibold text-3xl">
           NFTs <span className="font-normal text-sm">(1000)</span>
