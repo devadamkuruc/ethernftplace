@@ -26,6 +26,7 @@ import painting11 from "./painting11.jpg";
 import painting12 from "./painting12.jpg";
 import painting13 from "./painting13.jpg";
 import painting14 from "./painting14.jpg";
+import upload from "./upload.png";
 
 export interface Images {
   [key: string]: StaticImageData;
@@ -58,4 +59,5 @@ export const images: Images = {
   painting12,
   painting13,
   painting14,
+  upload,
 };

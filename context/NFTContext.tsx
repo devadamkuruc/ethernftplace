@@ -302,7 +302,6 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
     <NFTContextProvider
       value={{
         nftCurrency,
-        checkIfWalletIsConnected,
         currentAccount,
         connectWallet,
         uploadToIPFS,

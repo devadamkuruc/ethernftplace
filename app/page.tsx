@@ -1,5 +1,4 @@
-import { HeroSection, TopCreatorsSection } from "@/components";
-import NFTsSection from "@/components/NFTsSection";
+import { HeroSection, TopCreatorsSection, NFTsSection } from "@/components";
 
 const Home = () => {
   return (

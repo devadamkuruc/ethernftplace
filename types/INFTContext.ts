@@ -2,7 +2,6 @@ import { BigNumberish } from "ethers";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 
 export interface INFTContext {
-  checkIfWalletIsConnected: () => Promise<void>;
   nftCurrency: string;
   connectWallet: () => Promise<void>;
   currentAccount: string;

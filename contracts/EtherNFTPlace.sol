@@ -12,12 +12,21 @@ contract EtherNFTPlace is ERC721URIStorage {
 
     Counters.Counter private _tokenIds;
     Counters.Counter private _itemsSold;
+    Counters.Counter private _collectionIds;
 
     uint256 listingPrice = 0.0015 ether;
 
     address payable owner;
 
     mapping(uint256 => MarketItem) private idToMarketItem;
+    mapping(address => Collection[]) private collectionsByOwner;
+    mapping(uint256 => uint256) private collectionIdToIndex;
+
+    struct Collection {
+        uint256 collectionId;
+        address creator;
+        uint256[] nfts;
+    }
 
     struct MarketItem {
         uint256 tokenId;
@@ -25,6 +34,7 @@ contract EtherNFTPlace is ERC721URIStorage {
         address payable owner;
         uint256 price;
         bool sold;
+        uint256 collectionId;
     }
 
     event MarketItemCreated (
@@ -33,7 +43,18 @@ contract EtherNFTPlace is ERC721URIStorage {
         address owner,
         uint256 price,
         bool sold
+        uint256 collectionId;
     );
+
+    event CollectionCreated (
+        uint256 indexed collectionId,
+        address creator
+    );
+
+    event NFTAddedToCollection (
+        uint256 indexed collectionId,
+        uint256 indexed tokenId
+    )
 
     modifier onlyOwner() {
         require(owner == msg.sender, "Only marketplace owner can update the listing price");
@@ -74,13 +95,79 @@ contract EtherNFTPlace is ERC721URIStorage {
             payable(msg.sender),
             payable(address(this)),
             price,
-            false
+            false,
+            0
         );
 
         _transfer(msg.sender, address(this), tokenId);
 
         emit MarketItemCreated(tokenId, msg.sender, address(this), price, false);
     }
+
+    function createCollection() public {
+        _collectionIds.increment();
+        uint256 newCollectionId = _collectionIds.current();
+
+        collectionsByOwner[msg.sender].push(Collection(newCollectionId, msg.sender, new uint256[](0)));
+        collectionIdToIndex[newCollectionId] = collectionsByOwner[msg.sender].length - 1;
+
+        emit CollectionCreated(newCollectionId, msg.sender, new uint256[](0));
+    }
+
+
+    function addNFTToCollection(uint256 collectionId, uint256 tokenId) public {
+        require(_exists(tokenId), "Token does not exist");
+        require(ownerOf(tokenId) == msg.sender, "You are not the owner of this token");
+
+        uint256 collectionIndex = collectionIdToIndex[collectionId];
+        require(collectionsByOwner[msg.sender][collectionIndex].collectionId == collectionId, "Collection does not exist");
+
+        collectionsByOwner[msg.sender][collectionIndex].nfts.push(tokenId);
+
+        emit NFTAddedToCollection(collectionId, tokenId);
+    }
+
+
+    function fetchCollectionsByOwner(address owner) public view returns (uint256[] memory) {
+        Collection[] memory collections = collectionsByOwner[owner];
+        uint256[] memory collectionIds = new uint256[](collections.length);
+
+        for (uint256 i = 0; i < collections.length; i++) {
+            collectionIds[i] = collections[i].collectionId;
+        }
+
+        return collectionIds;
+    }
+
+    function fetchNFTsByCollection(uint256 collectionId) public view returns (MarketItem[] memory) {
+        require(collectionId <= _collectionIds.current(), "Invalid collection ID");
+
+        uint256[] memory nftIds = collectionsByOwner[msg.sender][collectionIdToIndex[collectionId]].nfts;
+        uint256 itemCount = 0;
+
+        // Count the number of NFTs owned by the user in the specified collection
+        for (uint256 i = 0; i < nftIds.length; i++) {
+            if (idToMarketItem[nftIds[i]].owner == msg.sender) {
+                itemCount += 1;
+            }
+        }
+
+        MarketItem[] memory items = new MarketItem[](itemCount);
+        uint256 currentIndex = 0;
+
+        // Populate the items array with NFTs owned by the user in the specified collection
+        for (uint256 i = 0; i < nftIds.length; i++) {
+            if (idToMarketItem[nftIds[i]].owner == msg.sender) {
+                MarketItem storage currentItem = idToMarketItem[nftIds[i]];
+                items[currentIndex] = currentItem;
+                currentIndex += 1;
+            }
+        }
+
+        return items;
+    }
+
+
 
     function resellToken(uint256 tokenId, uint256 price) public payable {
         require(idToMarketItem[tokenId].owner == msg.sender, "Only item owner can perform this operation");
