@@ -128,12 +128,21 @@ contract EtherNFTPlace is ERC721URIStorage {
     }
 
 
-    function fetchCollectionsByOwner(address owner) public view returns (uint256[] memory) {
+    function fetchCollectionsByOwner(address owner, uint256 pageNumber, uint256 collectionsPerPage) public view returns (uint256[] memory) {
         Collection[] memory collections = collectionsByOwner[owner];
         uint256[] memory collectionIds = new uint256[](collections.length);
 
-        for (uint256 i = 0; i < collections.length; i++) {
-            collectionIds[i] = collections[i].collectionId;
+        uint256 startIndex = (pageNumber - 1) * collectionsPerPage;
+        uint256 endIndex = startIndex + collectionsPerPage;
+
+        if (endIndex > totalCollections) {
+            endIndex = totalCollections;
+        }
+
+        uint256[] memory collectionIds = new uint256[](endIndex - startIndex);
+
+        for (uint256 i = startIndex; i < endIndex; i++) {
+            collectionIds[i - startIndex] = collections[i].collectionId;
         }
 
         return collectionIds;

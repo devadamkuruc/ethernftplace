@@ -14,6 +14,7 @@ module.exports = {
         "ether-grey-4": "rgba(255,255,255, 0.25)",
         "ether-grey-5": "rgba(255,255,255, 0.65)",
         "ether-grey-6": "rgba(255,255,255, 0.75)",
+        "ether-grey": "#353945",
         "ether-blue": "#0D37A4",
         "ether-pink-1": "rgba(255,0,153,1)",
         "ether-pink-2": "rgba(255,0,153,0.55)",
@@ -36,6 +37,8 @@ module.exports = {
         327: "327px",
       },
       height: {
+        108: "108px",
+        111: "111px",
         128: "128px",
         148: "148px",
         188: "188px",

@@ -1,7 +1,8 @@
 "use client";
 
-import { useCurrentNFTContext } from "@/context/NFTContext";
 import { ChangeEvent } from "react";
+
+import { useCurrentNFTContext } from "@/context/NFTContext";
 
 interface Props {
   inputType: string;

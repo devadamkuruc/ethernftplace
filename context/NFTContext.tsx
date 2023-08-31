@@ -64,14 +64,14 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const uploadToIPFS = async (file: File) => {
+  const uploadToIPFS = async (file: File, type: string) => {
     const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
 
     let data = new FormData();
     data.append("file", file);
 
     const metadata = JSON.stringify({
-      name: "NFT",
+      name: `/${type}/${Date.now()}`,
     });
     data.append("pinataMetadata", metadata);
 
@@ -130,6 +130,37 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
       const ipfsHash = response.data.IpfsHash;
       const urlWithHash = "https://gateway.pinata.cloud/ipfs/" + ipfsHash;
       await createSale(urlWithHash, price);
+
+      router.push("/");
+    } catch (error) {
+      console.error("Error uploading file to IPFS");
+      console.error("Actual Error: ", error);
+    }
+  };
+
+  const createCollection = async (
+    formInput: IFormInput,
+    fileUrl: string,
+    router: AppRouterInstance
+  ) => {
+    const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
+
+    const { name, description } = formInput;
+
+    if (!name || !description || !fileUrl) return;
+
+    const data = { name, description, image: fileUrl };
+
+    try {
+      const response = await axios.post(url, data, {
+        headers: {
+          pinata_api_key: process.env.NEXT_PUBLIC_PINATA_API_KEY,
+          pinata_secret_api_key: process.env.NEXT_PUBLIC_PINATA_SECRET,
+        },
+      });
+
+      const ipfsHash = response.data.IpfsHash;
+      const urlWithHash = "https://gateway.pinata.cloud/ipfs/" + ipfsHash;
 
       router.push("/");
     } catch (error) {

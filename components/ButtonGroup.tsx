@@ -17,17 +17,26 @@ const ButtonGroup = ({ router }: Props) => {
   };
 
   return currentAccount ? (
-    <Button
-      btnName="Create"
-      classStyles="rounded-md"
-      handleClick={() => {
-        router.push("/upload-nft");
-      }}
-    />
+    <div className="ml-3">
+      <Button
+        btnName="Create Collection"
+        classStyles="rounded-md  mr-3"
+        handleClick={() => {
+          router.push("/create-collection");
+        }}
+      />
+      <Button
+        btnName="Create NFT"
+        classStyles="rounded-md"
+        handleClick={() => {
+          router.push("/create-nft");
+        }}
+      />
+    </div>
   ) : (
     <Button
       btnName="Sign in"
-      classStyles="rounded-md"
+      classStyles="rounded-md ml-3"
       handleClick={handleSignIn}
     />
   );

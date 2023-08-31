@@ -8,7 +8,7 @@ import { Button } from "@/components";
 import { images } from "@/assets/images";
 import { shortenAddress } from "@/utils";
 
-const creators = [
+export const creators = [
   {
     background: images.tc1,
     profile: images.person1,
@@ -16,6 +16,7 @@ const creators = [
     walletBalance: 510,
     currency: "ETH",
     rank: 1,
+    totalAssets: 43,
   },
   {
     background: images.tc2,
@@ -24,6 +25,7 @@ const creators = [
     walletBalance: 312,
     currency: "ETH",
     rank: 2,
+    totalAssets: 43,
   },
   {
     background: images.tc3,
@@ -32,6 +34,7 @@ const creators = [
     walletBalance: 100,
     currency: "ETH",
     rank: 3,
+    totalAssets: 43,
   },
   {
     background: images.tc4,
@@ -40,6 +43,7 @@ const creators = [
     walletBalance: 98,
     currency: "ETH",
     rank: 4,
+    totalAssets: 43,
   },
 ];
 
@@ -48,7 +52,7 @@ const TopCreatorsSection = () => {
     <section className="mt-16 w-full">
       <h3 className="text-white font-semibold text-3xl mb-6">Top Creators</h3>
 
-      <div className="grid grid-cols-4 gap-6">
+      <div className="grid grid-cols-4 gap-6 p-4">
         {creators.map((creator, index) => (
           <div key={index} className="col-span-1 rounded-md">
             <div className="relative">

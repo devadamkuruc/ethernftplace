@@ -5,7 +5,7 @@ export interface INFTContext {
   nftCurrency: string;
   connectWallet: () => Promise<void>;
   currentAccount: string;
-  uploadToIPFS: (file: File) => Promise<IUploadToIPFSResponse>;
+  uploadToIPFS: (file: File, name: string) => Promise<IUploadToIPFSResponse>;
   createNFT: (
     formInput: IFormInput,
     fileUrl: string,
