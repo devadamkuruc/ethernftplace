@@ -7,9 +7,10 @@ interface Props {
   nft: IFormattedNFT;
   nftCurrency: string;
   classStyles: string;
+  textXS?: boolean;
 }
 
-const NFTCard = ({ nft, nftCurrency, classStyles }: Props) => {
+const NFTCard = ({ nft, nftCurrency, classStyles, textXS }: Props) => {
   return (
     <Link href={`/nft/${nft.tokenId}`}>
       <div className="flex flex-col col-span-1 cursor-pointer">
@@ -22,8 +23,16 @@ const NFTCard = ({ nft, nftCurrency, classStyles }: Props) => {
         </div>
 
         <div className="flex flex-col py-3">
-          <span className="text-white text-sm font-semibold">{nft.name}</span>
-          <span className="text-white text-sm">{`${nft.price} ${nftCurrency}`}</span>
+          <span
+            className={`text-white font-semibold ${
+              textXS ? "text-xs" : "text-sm"
+            }`}
+          >
+            {nft.name}
+          </span>
+          <span
+            className={`text-white ${textXS ? "text-xs" : "text-sm"}`}
+          >{`${nft.price} ${nftCurrency}`}</span>
         </div>
       </div>
     </Link>

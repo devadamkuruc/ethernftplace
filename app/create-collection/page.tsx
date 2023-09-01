@@ -205,7 +205,35 @@ const CreateCollection = () => {
               <h3 className="text-white">
                 NFTs <span>(1000)</span>
               </h3>
-              <span className="text-ether-grey-5 text-sm">$12,345</span>
+              <span className="text-ether-grey-5 text-sm">
+                Choose NFTs from your wallet
+              </span>
+            </div>
+            <div className="flex flex-col w-full rounded-md p-6">
+              <div className="grid grid-cols-5 gap-6">
+                {nfts.map((nft, index) => (
+                  <NFTCard
+                    nft={nft}
+                    nftCurrency={nftCurrency}
+                    key={index}
+                    classStyles="h-108"
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="pb-6 px-6 w-full flex justify-end">
+              <Pagination />
+            </div>
+          </div>
+
+          <div className="flex flex-col w-full bg-ether-grey-1 rounded-2xl mt-8">
+            <div className="border-b border-b-ether-grey-3 px-6 py-4">
+              <h3 className="text-white">
+                NFTs <span>(1000)</span>
+              </h3>
+              <span className="text-ether-grey-5 text-sm">
+                NFTs assigned to the collection
+              </span>
             </div>
             <div className="flex flex-col w-full rounded-md p-6">
               <div className="grid grid-cols-5 gap-6">

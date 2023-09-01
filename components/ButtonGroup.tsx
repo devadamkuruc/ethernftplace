@@ -20,7 +20,7 @@ interface Props {
   router: AppRouterInstance;
 }
 
-const headerDropdownLinks = [
+export const headerDropdownLinks = [
   {
     icon: <ProfileIcon />,
     name: "Profile",
@@ -28,8 +28,8 @@ const headerDropdownLinks = [
   },
   {
     icon: <FollowingIcon />,
-    name: "Following",
-    href: "/following",
+    name: "Watchlist",
+    href: "/watchlist",
   },
   {
     icon: <CollectionsIcon />,

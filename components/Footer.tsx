@@ -56,8 +56,9 @@ const Footer = () => {
               Explorify
             </Link>
             <p className="text-ether-grey-5 text-sm pt-4 pb-6">
-              Ether Explorer is a Block Explorer and Analytics Platform for
-              Ethereum, a decentralized smart contracts platform.
+              Join us in celebrating the boundless creativity of artists who are
+              using NFTs to redefine the concept of ownership and transform the
+              way we experience art.
             </p>
             <div className="flex gap-8">
               {socials.map((social, index) => (
@@ -67,10 +68,10 @@ const Footer = () => {
               ))}
             </div>
           </div>
-          <div></div>
         </div>
-        <div className="flex flex-3  flex-col">
-          <h2 className="text-sm text-white font-semibold mb-7">Blockchain</h2>
+
+        <div className="flex flex-3 flex-col">
+          <h2 className="text-sm text-white font-semibold mb-7">Marketplace</h2>
           {blockchainNav.map((item, index) => (
             <Link
               href={item.to}
