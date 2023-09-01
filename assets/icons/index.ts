@@ -14,6 +14,17 @@ import QRCode from "./QRCode";
 import BannerBackground from "./BannerBackground";
 import CopyIcon from "./CopyIcon";
 import CancelIcon from "./CancelIcon";
+import CollectionsIcon from "./CollectionsIcon";
+import CreateCollectionIcon from "./CreateCollectionIcon";
+import CreateNFTIcon from "./CreateNFTIcon";
+import EmptyHeartIcon from "./EmptyHeartIcon";
+import FilledHeartIcon from "./FilledHeartIcon";
+import FollowingIcon from "./FollowingIcon";
+import LogoutIcon from "./LogoutIcon";
+import NFTIcon from "./NFTIcon";
+import ProfileIcon from "./ProfileIcon";
+import ListNFTIcon from "./ListNFTIcon";
+import ListedNFTsIcon from "./ListedNFTsIcon";
 
 export {
   GithubIcon,
@@ -32,4 +43,15 @@ export {
   BannerBackground,
   CopyIcon,
   CancelIcon,
+  CollectionsIcon,
+  CreateCollectionIcon,
+  CreateNFTIcon,
+  EmptyHeartIcon,
+  FilledHeartIcon,
+  FollowingIcon,
+  LogoutIcon,
+  NFTIcon,
+  ProfileIcon,
+  ListNFTIcon,
+  ListedNFTsIcon,
 };

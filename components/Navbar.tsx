@@ -1,12 +1,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-interface Props {
-  active: string;
-  setActive: (item: string) => void;
-}
-
-const Navbar = ({ active, setActive }: Props) => {
+const Navbar = () => {
   const pathname = usePathname();
 
   const generateLink = (i: number) => {
@@ -14,9 +9,9 @@ const Navbar = ({ active, setActive }: Props) => {
       case 0:
         return "/";
       case 1:
-        return "/listed-nfts";
+        return "/rankings/collections";
       case 2:
-        return "/my-nfts";
+        return "/rankings/creators";
       default:
         return "/";
     }
@@ -24,21 +19,23 @@ const Navbar = ({ active, setActive }: Props) => {
 
   return (
     <nav className="flexCenter flex-row">
-      {["Explore NFTs", "Listed NFTs", "My NFTs"].map((item, index) => {
-        const isActive = pathname === generateLink(index);
+      {["Explore NFTs", "Top Collections", "Top Creators"].map(
+        (item, index) => {
+          const isActive = pathname === generateLink(index);
 
-        return (
-          <Link
-            key={index}
-            href={generateLink(index)}
-            className={`flex items-center mx-3 text-sm hover:text-white ${
-              isActive ? "text-white" : "text-ether-grey-6"
-            }`}
-          >
-            {item}
-          </Link>
-        );
-      })}
+          return (
+            <Link
+              key={index}
+              href={generateLink(index)}
+              className={`flex items-center mx-3 text-sm hover:text-white ${
+                isActive ? "text-white" : "text-ether-grey-6"
+              }`}
+            >
+              {item}
+            </Link>
+          );
+        }
+      )}
     </nav>
   );
 };

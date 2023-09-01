@@ -3,7 +3,7 @@
 import NFTCard from "./NFTCard";
 import { images } from "@/assets/images";
 import { useCurrentNFTContext } from "@/context/NFTContext";
-import Pagination from "./Pagination";
+import { Pagination } from "@/components";
 
 export const nfts = [
   {

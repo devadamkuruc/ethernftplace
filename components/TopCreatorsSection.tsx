@@ -45,6 +45,15 @@ export const creators = [
     rank: 4,
     totalAssets: 43,
   },
+  {
+    background: images.tc1,
+    profile: images.person1,
+    address: "0x5a8216a9c47ee2E8Df1c874252fDEe467215C25b",
+    walletBalance: 21,
+    currency: "ETH",
+    rank: 5,
+    totalAssets: 21,
+  },
 ];
 
 const TopCreatorsSection = () => {
@@ -52,11 +61,11 @@ const TopCreatorsSection = () => {
     <section className="mt-16 w-full">
       <h3 className="text-white font-semibold text-3xl mb-6">Top Creators</h3>
 
-      <div className="grid grid-cols-4 gap-6 p-4">
+      <div className="grid grid-cols-5 gap-6 p-4">
         {creators.map((creator, index) => (
           <div key={index} className="col-span-1 rounded-md">
             <div className="relative">
-              <div className="w-full h-188 overflow-hidden object-contain">
+              <div className="w-full h-148 overflow-hidden object-contain">
                 <Image
                   src={creator.background}
                   alt={`thumbnail-${index}`}

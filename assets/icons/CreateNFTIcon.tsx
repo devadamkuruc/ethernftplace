@@ -1,4 +1,4 @@
-const SearchIcon = () => {
+const CreateNFTIcon = () => {
   return (
     <svg
       width="24"
@@ -7,16 +7,16 @@ const SearchIcon = () => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clipPath="url(#clip0_1_1141)">
+      <g clipPath="url(#clip0_1_16663)">
         <path
-          d="M11.059 18.118C14.9576 18.118 18.118 14.9576 18.118 11.059C18.118 7.16042 14.9576 4 11.059 4C7.16042 4 4 7.16042 4 11.059C4 14.9576 7.16042 18.118 11.059 18.118Z"
+          d="M17.5399 10.1209L13.8799 6.46094"
           stroke="white"
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path
-          d="M19.9998 19.9998L16.0498 16.0498"
+          d="M6.251 21.0003H3V17.7493C3 17.4843 3.105 17.2293 3.293 17.0423L16.627 3.70731C17.018 3.31631 17.651 3.31631 18.041 3.70731L20.292 5.95831C20.683 6.34931 20.683 6.98231 20.292 7.37231L6.958 20.7073C6.771 20.8953 6.516 21.0003 6.251 21.0003V21.0003Z"
           stroke="white"
           strokeWidth="1.5"
           strokeLinecap="round"
@@ -24,7 +24,7 @@ const SearchIcon = () => {
         />
       </g>
       <defs>
-        <clipPath id="clip0_1_1141">
+        <clipPath id="clip0_1_16663">
           <rect width="24" height="24" fill="white" />
         </clipPath>
       </defs>
@@ -32,4 +32,4 @@ const SearchIcon = () => {
   );
 };
 
-export default SearchIcon;
+export default CreateNFTIcon;

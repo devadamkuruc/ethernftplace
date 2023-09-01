@@ -1,6 +1,8 @@
-import React from "react";
+interface Props {
+  classStyles: string;
+}
 
-const BannerBackground = () => {
+const BannerBackground = ({ classStyles }: Props) => {
   return (
     <svg
       width="288"
@@ -8,7 +10,7 @@ const BannerBackground = () => {
       viewBox="0 0 288 128"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className=" absolute top-0 left-0 z-10"
+      className={`absolute top-0 left-0 ${classStyles}`}
     >
       <g opacity="0.25">
         <circle

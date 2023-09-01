@@ -12,7 +12,7 @@ import {
 } from "@/components";
 import { useCurrentNFTContext } from "@/context/NFTContext";
 
-const MyNFTs = () => {
+const AccountDetails = () => {
   const { nftCurrency } = useCurrentNFTContext();
   const [copyStatus, setCopyStatus] = useState<string>("");
 
@@ -93,4 +93,4 @@ const MyNFTs = () => {
   );
 };
 
-export default MyNFTs;
+export default AccountDetails;

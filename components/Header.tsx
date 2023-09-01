@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -8,7 +7,6 @@ import { ButtonGroup, Navbar } from "@/components";
 
 const Header = () => {
   const router = useRouter();
-  const [active, setActive] = useState("");
 
   return (
     <header className="absolute w-full flex justify-center px-28 h-16 z-10">
@@ -20,7 +18,7 @@ const Header = () => {
         </div>
 
         <div className="flexCenter">
-          <Navbar active={active} setActive={setActive} />
+          <Navbar />
           <ButtonGroup router={router} />
         </div>
       </div>

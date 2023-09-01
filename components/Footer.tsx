@@ -33,20 +33,16 @@ const socials = [
 
 const blockchainNav = [
   {
-    label: "Transactions",
-    to: "/txs",
+    label: "Explore NFTs",
+    to: "/",
   },
   {
-    label: "Pending Transactions",
-    to: "/txsPending",
+    label: "Top Collections",
+    to: "/rankings/collections",
   },
   {
-    label: "Blocks",
-    to: "/blocks",
-  },
-  {
-    label: "Top Accounts",
-    to: "/accounts",
+    label: "Top Creators",
+    to: "/rankings/creators",
   },
 ];
 
