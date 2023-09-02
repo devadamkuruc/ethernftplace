@@ -90,7 +90,7 @@ contract EtherNFTPlace is ERC721URIStorage {
         return listingPrice;
     }
 
-    function createToken(string memory tokenURI, uint256 price, uint256 collectionId) public payable returns (uint) {
+    function createToken(string memory tokenURI, uint256 collectionId) public payable returns (uint) {
         _tokenIds.increment();
 
         uint256 newTokenId = _tokenIds.current();
@@ -98,14 +98,14 @@ contract EtherNFTPlace is ERC721URIStorage {
         _mint(msg.sender, newTokenId);
         _setTokenURI(newTokenId, tokenURI);
 
-         if (collectionId != 0) {
-        addNFTToCollection(collectionId, newTokenId);
-    }
+        if (collectionId != 0) {
+            addNFTToCollection(collectionId, newTokenId);
+        }
 
         return newTokenId;
     }
 
-    function createMarketItem(uint256 tokenId, uint256 price) private {
+    function createMarketItem(uint256 tokenId, uint256 price, uint256 collectionId) private {
         require(price > 0, "Price must be at least 1");
         require(msg.value == listingPrice, "Price must be equal to listing price");
 
@@ -115,12 +115,12 @@ contract EtherNFTPlace is ERC721URIStorage {
             payable(address(this)),
             price,
             false,
-            0
+            collectionId
         );
 
         _transfer(msg.sender, address(this), tokenId);
 
-        emit MarketItemCreated(tokenId, msg.sender, address(this), price, false);
+        emit MarketItemCreated(tokenId, msg.sender, address(this), price, false, collectionId);
     }
 
     function createCollection() public {
