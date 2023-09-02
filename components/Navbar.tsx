@@ -9,9 +9,9 @@ const Navbar = () => {
       case 0:
         return "/";
       case 1:
-        return "/rankings/collections";
+        return "/top-collections";
       case 2:
-        return "/rankings/creators";
+        return "/latest";
       default:
         return "/";
     }
@@ -19,7 +19,7 @@ const Navbar = () => {
 
   return (
     <nav className="flexCenter flex-row">
-      {["Explore NFTs", "Top Collections", "Top Creators"].map(
+      {["Explore NFTs", "Top Collections", "Latest Activity"].map(
         (item, index) => {
           const isActive = pathname === generateLink(index);
 

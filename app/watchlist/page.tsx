@@ -2,7 +2,6 @@ import {
   AccountsTable,
   Banner,
   CollectionsTable,
-  NFTsTable,
   Searchbar,
 } from "@/components";
 
