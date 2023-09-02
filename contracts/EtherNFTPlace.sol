@@ -37,13 +37,22 @@ contract EtherNFTPlace is ERC721URIStorage {
         uint256 collectionId;
     }
 
+    struct Activity {
+        string activityType;
+        uint256 timestamp;
+        uint256 tokenId;
+        address user;
+    }
+
+    Activity[] public latestActivity;
+
     event MarketItemCreated (
         uint256 indexed tokenId,
         address seller,
         address owner,
         uint256 price,
-        bool sold
-        uint256 collectionId;
+        bool sold,
+        uint256 collectionId
     );
 
     event CollectionCreated (
@@ -54,7 +63,7 @@ contract EtherNFTPlace is ERC721URIStorage {
     event NFTAddedToCollection (
         uint256 indexed collectionId,
         uint256 indexed tokenId
-    )
+    );
 
     modifier onlyOwner() {
         require(owner == msg.sender, "Only marketplace owner can update the listing price");
@@ -65,6 +74,14 @@ contract EtherNFTPlace is ERC721URIStorage {
         owner = payable(msg.sender);
     }
 
+    function recordActivity(string memory _activityType, uint256 _tokenId) public {
+        latestActivity.push(Activity(_activityType, block.timestamp, _tokenId, msg.sender));
+    }
+
+    function getLatestActivity() public view returns (Activity[] memory) {
+        return latestActivity;
+    }
+
     function updateListingPrice(uint _listingPrice) public payable onlyOwner {
         listingPrice = _listingPrice;
     }
@@ -73,7 +90,7 @@ contract EtherNFTPlace is ERC721URIStorage {
         return listingPrice;
     }
 
-    function createToken(string memory tokenURI, uint256 price) public payable returns (uint) {
+    function createToken(string memory tokenURI, uint256 price, uint256 collectionId) public payable returns (uint) {
         _tokenIds.increment();
 
         uint256 newTokenId = _tokenIds.current();
@@ -81,7 +98,9 @@ contract EtherNFTPlace is ERC721URIStorage {
         _mint(msg.sender, newTokenId);
         _setTokenURI(newTokenId, tokenURI);
 
-        createMarketItem(newTokenId, price);
+         if (collectionId != 0) {
+        addNFTToCollection(collectionId, newTokenId);
+    }
 
         return newTokenId;
     }
@@ -111,7 +130,7 @@ contract EtherNFTPlace is ERC721URIStorage {
         collectionsByOwner[msg.sender].push(Collection(newCollectionId, msg.sender, new uint256[](0)));
         collectionIdToIndex[newCollectionId] = collectionsByOwner[msg.sender].length - 1;
 
-        emit CollectionCreated(newCollectionId, msg.sender, new uint256[](0));
+        emit CollectionCreated(newCollectionId, msg.sender);
     }
 
 
@@ -129,24 +148,24 @@ contract EtherNFTPlace is ERC721URIStorage {
 
 
     function fetchCollectionsByOwner(address owner, uint256 pageNumber, uint256 collectionsPerPage) public view returns (uint256[] memory) {
-        Collection[] memory collections = collectionsByOwner[owner];
-        uint256[] memory collectionIds = new uint256[](collections.length);
+    Collection[] memory collections = collectionsByOwner[owner];
 
-        uint256 startIndex = (pageNumber - 1) * collectionsPerPage;
-        uint256 endIndex = startIndex + collectionsPerPage;
+    uint256 startIndex = (pageNumber - 1) * collectionsPerPage;
+    uint256 endIndex = startIndex + collectionsPerPage;
 
-        if (endIndex > totalCollections) {
-            endIndex = totalCollections;
-        }
-
-        uint256[] memory collectionIds = new uint256[](endIndex - startIndex);
-
-        for (uint256 i = startIndex; i < endIndex; i++) {
-            collectionIds[i - startIndex] = collections[i].collectionId;
-        }
-
-        return collectionIds;
+    if (endIndex > collections.length) {
+        endIndex = collections.length;
     }
+
+    uint256[] memory collectionIds = new uint256[](endIndex - startIndex);
+
+    for (uint256 i = startIndex; i < endIndex; i++) {
+        collectionIds[i - startIndex] = collections[i].collectionId;
+    }
+
+    return collectionIds;
+}
+
 
     function fetchNFTsByCollection(uint256 collectionId) public view returns (MarketItem[] memory) {
         require(collectionId <= _collectionIds.current(), "Invalid collection ID");
