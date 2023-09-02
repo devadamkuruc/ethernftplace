@@ -14,6 +14,7 @@ export const collections = [
     totalAssets: 824,
     owners: 250,
     image: images.painting1,
+    volume: 22,
   },
   {
     collectionId: "0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1190",
@@ -21,6 +22,7 @@ export const collections = [
     totalAssets: 824,
     owners: 250,
     image: images.painting2,
+    volume: 22,
   },
   {
     collectionId: "0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1191",
@@ -28,6 +30,7 @@ export const collections = [
     totalAssets: 824,
     owners: 250,
     image: images.painting3,
+    volume: 22,
   },
   {
     collectionId: "0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1192",
@@ -35,6 +38,7 @@ export const collections = [
     totalAssets: 824,
     owners: 250,
     image: images.painting4,
+    volume: 22,
   },
   {
     collectionId: "0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1193",
@@ -42,6 +46,7 @@ export const collections = [
     totalAssets: 824,
     owners: 250,
     image: images.painting5,
+    volume: 22,
   },
   {
     collectionId: "0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1194",
@@ -49,6 +54,7 @@ export const collections = [
     totalAssets: 824,
     owners: 250,
     image: images.painting6,
+    volume: 22,
   },
   {
     collectionId: "0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1195",
@@ -56,16 +62,24 @@ export const collections = [
     totalAssets: 824,
     owners: 250,
     image: images.painting7,
+    volume: 22,
   },
 ];
 
-const CollectionsTable = () => {
+interface Props {
+  watchlist?: boolean;
+}
+
+const CollectionsTable = ({ watchlist }: Props) => {
   const router = useRouter();
   return (
     <div className="flex flex-col w-full bg-ether-grey-1 rounded-2xl mt-10">
-      <div className="border-b border-b-ether-grey-3 px-6">
-        <div className="text-white my-4">
+      <div className="border-b border-b-ether-grey-3 py-4 px-6">
+        <div className="text-white ">
           Collections <span className="text-xs">(11)</span>
+        </div>
+        <div className="text-ether-grey-5 text-sm">
+          Collections in your watchlist
         </div>
       </div>
       <div className="flex flex-col">

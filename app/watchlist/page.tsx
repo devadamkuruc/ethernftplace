@@ -1,4 +1,10 @@
-import { AccountsTable, Banner, NFTsTable, Searchbar } from "@/components";
+import {
+  AccountsTable,
+  Banner,
+  CollectionsTable,
+  NFTsTable,
+  Searchbar,
+} from "@/components";
 
 const Watchlist = () => {
   return (
@@ -9,22 +15,18 @@ const Watchlist = () => {
       </div>
 
       <div className="text-white mt-16 self-start font-semibold text-3xl">
+        Watchlist
+      </div>
+
+      <div className="text-white mt-16 self-start font-semibold text-2xl">
         Creators
       </div>
-      <div className="text-ether-grey-5 text-sm mt-2 self-start">
-        Creators are following
-      </div>
-
       <AccountsTable />
 
-      <div className="text-white mt-16 self-start font-semibold text-3xl">
-        NFTs
+      <div className="text-white mt-16 self-start font-semibold text-2xl">
+        Collections
       </div>
-      <div className="text-ether-grey-5 text-sm mt-2 self-start">
-        NFTs in your watchlist
-      </div>
-
-      <NFTsTable nftCardClassStyles="h-148" tableClassStyles="mt-8" />
+      <CollectionsTable watchlist />
     </div>
   );
 };

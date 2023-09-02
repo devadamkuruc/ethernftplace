@@ -13,7 +13,7 @@ const CollectionDetail = () => {
       <div className="flex items-center w-full mt-14 mb-4">
         <div
           className="inline-flex p-5 bg-ether-grey-2 rounded-2xl cursor-pointer"
-          onClick={() => router.push("/account")}
+          onClick={() => router.back()}
         >
           <ArrowLeftIcon />
         </div>
