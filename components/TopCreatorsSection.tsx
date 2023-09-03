@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components";
 import { images } from "@/assets/images";
@@ -57,6 +58,8 @@ export const creators = [
 ];
 
 const TopCreatorsSection = () => {
+  const router = useRouter();
+
   return (
     <section className="mt-16 w-full">
       <h3 className="text-white font-semibold text-3xl mb-6">Top Creators</h3>
@@ -77,6 +80,7 @@ const TopCreatorsSection = () => {
                   src={creator.profile}
                   alt={`profile-${index}`}
                   className="cursor-pointer"
+                  onClick={() => router.push(`/address/${creator.address}`)}
                 />
               </div>
               <div className="absolute top-3 left-3 rounded-full bg-black text-white px-3 py-1 text-xs">
@@ -88,7 +92,7 @@ const TopCreatorsSection = () => {
               <div className="flex flex-col">
                 <Link
                   href={`/address/${creator.address}`}
-                  className="text-white font-semibold text-sm"
+                  className="text-white font-semibold text-sm hover:underline"
                 >
                   {shortenAddress(creator.address)}
                 </Link>

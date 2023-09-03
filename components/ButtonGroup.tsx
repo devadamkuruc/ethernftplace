@@ -54,7 +54,7 @@ export const headerDropdownLinks = [
   {
     icon: <ListNFTIcon />,
     name: "List NFT",
-    href: "/listing/create",
+    href: "/list-nft",
   },
   {
     icon: <LogoutIcon />,

@@ -11,6 +11,8 @@ import {
   Searchbar,
 } from "@/components";
 import { useCurrentNFTContext } from "@/context/NFTContext";
+import { creators } from "@/components/TopCreatorsSection";
+import Image from "next/image";
 
 const AccountDetails = () => {
   const { nftCurrency } = useCurrentNFTContext();
@@ -40,10 +42,8 @@ const AccountDetails = () => {
         <Searchbar />
         <Banner />
       </div>
-      <div className="text-white my-4 self-start font-semibold text-3xl">
-        Account Details
-      </div>
-      <div className="grid grid-cols-12 w-full gap-2">
+
+      <div className="grid grid-cols-12 w-full gap-2 mt-8">
         <div className="flex flex-col justify-between col-span-3 bg-ether-grey-1 h-111 rounded-2xl p-6">
           <div className="text-ether-grey-6 text-sm">Net Worth</div>
           <div className="text-ether-grey-5 text-xs">$12,345</div>

@@ -77,9 +77,13 @@ const CollectionsTable = ({ watchlist }: Props) => {
         <div className="text-white ">
           Collections <span className="text-xs">(11)</span>
         </div>
-        <div className="text-ether-grey-5 text-sm">
-          Collections in your watchlist
-        </div>
+        {watchlist ? (
+          <div className="text-ether-grey-5 text-sm">
+            Collections in your watchlist
+          </div>
+        ) : (
+          ""
+        )}
       </div>
       <div className="flex flex-col">
         <div className="grid grid-cols-12 border-b border-b-ether-grey-2 px-6 py-4">

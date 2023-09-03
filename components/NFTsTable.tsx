@@ -72,9 +72,14 @@ interface Props {
   nftCardClassStyles: string;
   tableClassStyles?: string;
   accountDetail?: boolean;
+  noCollection?: boolean;
 }
 
-const NFTsTable = ({ nftCardClassStyles, tableClassStyles }: Props) => {
+const NFTsTable = ({
+  nftCardClassStyles,
+  tableClassStyles,
+  noCollection,
+}: Props) => {
   const { nftCurrency } = useCurrentNFTContext();
 
   return (
@@ -85,7 +90,13 @@ const NFTsTable = ({ nftCardClassStyles, tableClassStyles }: Props) => {
         <h3 className="text-white">
           NFTs <span className="text-xs">(1000)</span>
         </h3>
-        <span className="text-ether-grey-5 text-sm">$12,345</span>
+        {noCollection ? (
+          <span className="text-ether-grey-5 text-sm">
+            NFTs not assigned to any collection
+          </span>
+        ) : (
+          <span className="text-ether-grey-5 text-sm">$12,345</span>
+        )}
       </div>
       <div className="flex flex-col w-full rounded-md p-6">
         <div className="grid grid-cols-6 gap-6">

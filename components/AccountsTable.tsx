@@ -42,13 +42,6 @@ const AccountsTable = () => {
               <div className="grid grid-cols-12 border-b border-b-ether-grey-2 items-center py-4">
                 <div className="col-span-1 text-white text-sm">{index + 1}</div>
                 <div className="flex col-span-5 text-white text-sm items-center">
-                  <div className="w-8 h-8 overflow-hidden rounded-full">
-                    <Image
-                      src={creator.profile}
-                      alt="collection"
-                      className="object-contain"
-                    />
-                  </div>
                   <div
                     className="ml-3 hover:underline"
                     onClick={() => router.push(`/address/${creator.address}`)}

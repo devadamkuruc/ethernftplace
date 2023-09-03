@@ -141,7 +141,7 @@ const CreateNFT = () => {
             Choose collection
           </div>
           <div className="text-ether-grey-5 text-sm mt-2">
-            Choose an existing collection or create new one
+            Choose an existing collection
           </div>
 
           <div className="flex flex-col w-full bg-ether-grey-1 rounded-2xl mt-10">
