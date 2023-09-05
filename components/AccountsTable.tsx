@@ -15,7 +15,7 @@ const AccountsTable = () => {
     <div className="flex flex-col w-full bg-ether-grey-1 rounded-2xl mt-10">
       <div className="border-b border-b-ether-grey-3 py-4 px-6">
         <div className="text-white">
-          Following <span className="text-xs">(4)</span>
+          Creators <span className="text-xs">(4)</span>
         </div>
         <div className="text-ether-grey-5 text-sm">
           Creators you have been following

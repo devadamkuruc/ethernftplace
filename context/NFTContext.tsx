@@ -1,16 +1,16 @@
 "use client";
 
 import { ReactNode, useEffect, useState } from "react";
-import { ethers } from "ethers";
+import { ethers, BigNumberish } from "ethers";
 import Web3Modal from "web3modal";
 import axios from "axios";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 
 import {
-  IFormInput,
-  IFormattedNFT,
+  IFormCollectionInput,
+  IFormattedCollection,
   INFTContext,
-  IRawNFT,
+  IRawCollection,
 } from "@/types/INFTContext";
 import { createCtx } from "@/utils";
 import { MarketAddress, MarketAddressABI } from "./constants";
@@ -71,7 +71,7 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
     data.append("file", file);
 
     const metadata = JSON.stringify({
-      name: `/${type}/${Date.now()}`,
+      name: `Image`,
     });
     data.append("pinataMetadata", metadata);
 
@@ -106,50 +106,35 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
       });
   };
 
-  const createNFT = async (
-    formInput: IFormInput,
-    fileUrl: string,
-    router: AppRouterInstance
-  ) => {
-    const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
-
-    const { name, description, price } = formInput;
-
-    if (!name || !description || !price || !fileUrl) return;
-
-    const data = { name, description, image: fileUrl };
-
-    try {
-      const response = await axios.post(url, data, {
-        headers: {
-          pinata_api_key: process.env.NEXT_PUBLIC_PINATA_API_KEY,
-          pinata_secret_api_key: process.env.NEXT_PUBLIC_PINATA_SECRET,
-        },
-      });
-
-      const ipfsHash = response.data.IpfsHash;
-      const urlWithHash = "https://gateway.pinata.cloud/ipfs/" + ipfsHash;
-      await createSale(urlWithHash, price);
-
-      router.push("/");
-    } catch (error) {
-      console.error("Error uploading file to IPFS");
-      console.error("Actual Error: ", error);
-    }
-  };
-
   const createCollection = async (
-    formInput: IFormInput,
+    formInput: IFormCollectionInput,
     fileUrl: string,
     router: AppRouterInstance
   ) => {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.BrowserProvider(connection);
+    const signer = await provider.getSigner();
+
+    const contract = fetchContract(signer);
+
     const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
 
     const { name, description } = formInput;
 
-    if (!name || !description || !fileUrl) return;
+    if (!name || !description || !fileUrl) {
+      console.log("Missing input parameters!");
+      return;
+    }
 
-    const data = { name, description, image: fileUrl };
+    const dataContent = { name, description, image: fileUrl };
+
+    let data = {
+      pinataContent: dataContent,
+      pinataMetadata: {
+        name: `collection/${Date.now()}`,
+      },
+    };
 
     try {
       const response = await axios.post(url, data, {
@@ -162,171 +147,49 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
       const ipfsHash = response.data.IpfsHash;
       const urlWithHash = "https://gateway.pinata.cloud/ipfs/" + ipfsHash;
 
+      const transaction = await contract.createCollection(urlWithHash);
+
+      await transaction.wait();
+
       router.push("/");
     } catch (error) {
-      console.error("Error uploading file to IPFS");
-      console.error("Actual Error: ", error);
+      console.error("Something went wrong creating collection:", error);
     }
   };
 
-  const createSale = async (
-    url: string,
-    formInputPrice: string,
-    isReselling?: boolean,
-    id?: string
-  ) => {
-    try {
-      const web3Modal = new Web3Modal();
-      const connection = await web3Modal.connect();
-      const provider = new ethers.BrowserProvider(connection);
-      const signer = await provider.getSigner();
+  const fetchMyCollections = async (): Promise<IFormattedCollection[]> => {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.BrowserProvider(connection);
+    const signer = await provider.getSigner();
 
-      const price = ethers.parseUnits(formInputPrice, "ether");
-      const contract = fetchContract(signer);
-      const listingPrice = await contract.getListingPrice();
+    const contract = fetchContract(signer);
 
-      const transaction = !isReselling
-        ? await contract.createToken(url, price, {
-            value: listingPrice.toString(),
-          })
-        : await contract.resellToken(id, price, {
-            value: listingPrice.toString(),
+    const data = await contract.fetchMyCollections();
+
+    const collections = await Promise.all(
+      data.map(
+        async ({ collectionId, owner, collectionURI }: IRawCollection) => {
+          const {
+            data: { image, name, description },
+          } = await axios.get(collectionURI, {
+            headers: {
+              Accept: "text/plain",
+            },
           });
 
-      await transaction.wait();
-    } catch (error) {
-      console.log("Something went wrong while creating sale: ", error);
-    }
-  };
-
-  const fetchNFTs = async (): Promise<IFormattedNFT[] | undefined> => {
-    try {
-      const provider = new ethers.JsonRpcProvider();
-      const contract = fetchContract(provider);
-
-      const data = await contract.fetchMarketItems();
-
-      const items = await Promise.all(
-        data.map(
-          async ({
-            tokenId,
-            seller,
+          return {
+            collectionId: Number(collectionId),
             owner,
-            price: unformattedPrice,
-          }: IRawNFT) => {
-            const tokenURI = await contract.tokenURI(tokenId);
+            image,
+            name,
+            description,
+          };
+        }
+      )
+    );
 
-            const {
-              data: { image, name, description },
-            } = await axios.get(tokenURI, {
-              headers: {
-                Accept: "text/plain",
-              },
-            });
-
-            const price = ethers.formatUnits(
-              unformattedPrice.toString(),
-              "ether"
-            );
-
-            return {
-              price,
-              tokenId: Number(tokenId),
-              seller,
-              owner,
-              image,
-              name,
-              description,
-              tokenURI,
-            };
-          }
-        )
-      );
-
-      return items;
-    } catch (error) {
-      console.log("Something went wrong while fetching NFTs: ", error);
-    }
-  };
-
-  const fetchMyNFTsOrListedNFTs = async (
-    type: string
-  ): Promise<IFormattedNFT[] | undefined> => {
-    try {
-      const web3Modal = new Web3Modal();
-      const connection = await web3Modal.connect();
-      const provider = new ethers.BrowserProvider(connection);
-      const signer = await provider.getSigner();
-
-      const contract = fetchContract(signer);
-
-      const data =
-        type === "fetchItemsListed"
-          ? await contract.fetchItemsListed()
-          : await contract.fetchMyNFTs();
-
-      const items = await Promise.all(
-        data.map(
-          async ({
-            tokenId,
-            seller,
-            owner,
-            price: unformattedPrice,
-          }: IRawNFT) => {
-            const tokenURI = await contract.tokenURI(tokenId);
-
-            const {
-              data: { image, name, description },
-            } = await axios.get(tokenURI, {
-              headers: {
-                Accept: "text/plain",
-              },
-            });
-
-            const price = ethers.formatUnits(
-              unformattedPrice.toString(),
-              "ether"
-            );
-
-            return {
-              price,
-              tokenId: Number(tokenId),
-              seller,
-              owner,
-              image,
-              name,
-              description,
-              tokenURI,
-            };
-          }
-        )
-      );
-
-      return items;
-    } catch (error) {
-      console.log("Something went wrong while fetching NFTs: ", error);
-    }
-  };
-
-  const buyNFT = async (nft: IFormattedNFT) => {
-    try {
-      const web3Modal = new Web3Modal();
-      const connection = await web3Modal.connect();
-      const provider = new ethers.BrowserProvider(connection);
-      const signer = await provider.getSigner();
-
-      const contract = fetchContract(signer);
-
-      const price = ethers.parseUnits(nft.price.toString(), "ether");
-
-      const transaction = await contract.createMarketSale(nft.tokenId, {
-        value: price,
-      });
-
-      await transaction.wait();
-    } catch (error) {
-      console.log("Something went wrong while buying NFT: ", error);
-    }
+    return collections;
   };
 
   return (
@@ -336,11 +199,8 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
         currentAccount,
         connectWallet,
         uploadToIPFS,
-        createNFT,
-        createSale,
-        fetchNFTs,
-        fetchMyNFTsOrListedNFTs,
-        buyNFT,
+        createCollection,
+        fetchMyCollections,
       }}
     >
       {children}

@@ -17,14 +17,8 @@ const Watchlist = () => {
         Watchlist
       </div>
 
-      <div className="text-white mt-16 self-start font-semibold text-2xl">
-        Creators
-      </div>
       <AccountsTable />
 
-      <div className="text-white mt-16 self-start font-semibold text-2xl">
-        Collections
-      </div>
       <CollectionsTable watchlist />
     </div>
   );

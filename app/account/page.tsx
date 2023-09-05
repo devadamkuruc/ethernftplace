@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { CancelIcon, CheckIcon, CopyIcon } from "@/assets/icons";
 import {
@@ -13,10 +13,21 @@ import {
 import { useCurrentNFTContext } from "@/context/NFTContext";
 import { creators } from "@/components/TopCreatorsSection";
 import Image from "next/image";
+import { IFormattedCollection } from "@/types/INFTContext";
 
 const AccountDetails = () => {
-  const { nftCurrency } = useCurrentNFTContext();
+  const { nftCurrency, fetchMyCollections, currentAccount } =
+    useCurrentNFTContext();
   const [copyStatus, setCopyStatus] = useState<string>("");
+  const [collections, setCollections] = useState<IFormattedCollection[]>([]);
+
+  useEffect(() => {
+    fetchMyCollections().then((collections) => {
+      setCollections(collections);
+    });
+  }, []);
+
+  console.log(collections);
 
   const copyToClipboard = async () => {
     try {

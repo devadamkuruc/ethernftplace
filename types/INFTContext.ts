@@ -6,22 +6,12 @@ export interface INFTContext {
   connectWallet: () => Promise<void>;
   currentAccount: string;
   uploadToIPFS: (file: File, name: string) => Promise<IUploadToIPFSResponse>;
-  createNFT: (
-    formInput: IFormInput,
+  createCollection: (
+    formInput: IFormCollectionInput,
     fileUrl: string,
     router: AppRouterInstance
   ) => Promise<void>;
-  fetchNFTs: () => Promise<IFormattedNFT[] | undefined>;
-  fetchMyNFTsOrListedNFTs: (
-    type: string
-  ) => Promise<IFormattedNFT[] | undefined>;
-  buyNFT: (nft: IFormattedNFT) => Promise<void>;
-  createSale: (
-    url: string,
-    formInputPrice: string,
-    isReselling?: boolean,
-    id?: string
-  ) => Promise<void>;
+  fetchMyCollections: () => Promise<IFormattedCollection[]>;
 }
 
 export interface IUploadToIPFSResponse {
@@ -29,10 +19,9 @@ export interface IUploadToIPFSResponse {
   message: string;
 }
 
-export interface IFormInput {
+export interface IFormCollectionInput {
   name: string;
   description: string;
-  price: string;
 }
 
 export interface IRawNFT {
@@ -51,4 +40,26 @@ export interface IFormattedNFT {
   description: string;
   price: string;
   tokenURI: string;
+}
+
+export interface ICollection {
+  collectionId: BigNumberish;
+  image: string;
+  name: string;
+  description: string;
+  // Add other properties as needed
+}
+
+export interface IRawCollection {
+  collectionId: string;
+  owner: string;
+  collectionURI: string;
+}
+
+export interface IFormattedCollection {
+  collectionId: number;
+  owner: string;
+  image: string;
+  name: string;
+  description: string;
 }

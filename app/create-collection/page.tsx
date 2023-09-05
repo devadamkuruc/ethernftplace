@@ -76,17 +76,16 @@ const CreateCollection = () => {
   const [formInput, setFormInput] = useState({
     name: "",
     description: "",
-    price: "",
-    category: 0,
   });
   const [fileUrl, setFileUrl] = useState<string>("");
-  const { uploadToIPFS, createNFT, nftCurrency } = useCurrentNFTContext();
+  const { uploadToIPFS, createCollection, nftCurrency } =
+    useCurrentNFTContext();
   const router = useRouter();
 
   const onDrop = useCallback(
     async (acceptedFile: File[]) => {
       if (uploadToIPFS) {
-        const response = await uploadToIPFS(acceptedFile[0], "collections");
+        const response = await uploadToIPFS(acceptedFile[0], "collection");
 
         if (response.success) {
           setFileUrl(response.message);
@@ -257,7 +256,7 @@ const CreateCollection = () => {
           <Button
             btnName="Create NFT Collection"
             classStyles="rounded-md"
-            handleClick={() => createNFT(formInput, fileUrl, router)}
+            handleClick={() => createCollection(formInput, fileUrl, router)}
           />
         </div>
       </div>
