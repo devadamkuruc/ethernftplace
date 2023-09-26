@@ -28,7 +28,7 @@ contract EtherNFTPlace is ERC721URIStorage {
     struct NFT {
         uint256 tokenId;
         address owner;
-        uint256 collectionId
+        uint256 collectionId;
     }
 
     event CollectionCreated (
@@ -39,7 +39,8 @@ contract EtherNFTPlace is ERC721URIStorage {
 
     event NFTCreated (
         uint indexed tokenId,
-        address owner
+        address owner,
+        uint256 collectionId
     );
 
     constructor() ERC721("Metaverse Tokens", "METT") {
@@ -105,6 +106,32 @@ contract EtherNFTPlace is ERC721URIStorage {
         );
 
         emit NFTCreated(newTokenId, msg.sender, collectionId);
+
+        return newTokenId;
+    }
+
+    function fetchNFTsByCollection(uint256 collectionId) public view returns(NFT[] memory) {
+        uint256 totalNFTCount = _tokenIds.current();
+        uint256 nftCount = 0;
+        uint256 currentIndex = 0;
+
+        for (uint256 i; i <= totalNFTCount; i++) {
+            if (idToNFT[i].collectionId == collectionId) {
+                nftCount++;
+            }
+        }
+
+        NFT[] memory nfts = new NFT[](nftCount);
+
+        for (uint256 i = 1; i <= totalNFTCount; i++) {
+            if (idToNFT[i].collectionId == collectionId) {
+                NFT storage currentNFT = idToNFT[i];
+                nfts[currentIndex] = currentNFT;
+                currentIndex++;
+            }
+        }
+
+        return nfts;
     }
 
 }

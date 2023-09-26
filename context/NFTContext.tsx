@@ -8,6 +8,7 @@ import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 
 import {
   IFormCollectionInput,
+  IFormNFTInput,
   IFormattedCollection,
   INFTContext,
   IRawCollection,
@@ -192,6 +193,48 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
     return collections;
   };
 
+  const createNFT = async (
+    formInput: IFormNFTInput,
+    fileUrl: string,
+    router: AppRouterInstance
+  ) => {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.BrowserProvider(connection);
+    const signer = await provider.getSigner();
+
+    const contract = fetchContract(signer);
+
+    const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
+
+    const { name, description, collectionId } = formInput;
+
+    if (!name || !description || !collectionId || !fileUrl) return;
+
+    const data = { name, description, image: fileUrl };
+
+    try {
+      const response = await axios.post(url, data, {
+        headers: {
+          pinata_api_key: process.env.NEXT_PUBLIC_PINATA_API_KEY,
+          pinata_secret_api_key: process.env.NEXT_PUBLIC_PINATA_SECRET,
+        },
+      });
+
+      const ipfsHash = response.data.IpfsHash;
+      const urlWithHash = "https://gateway.pinata.cloud/ipfs/" + ipfsHash;
+
+      const transaction = await contract.createToken(urlWithHash, collectionId);
+
+      await transaction.wait();
+
+      router.push("/");
+    } catch (error) {
+      console.error("Error uploading file to IPFS");
+      console.error("Actual Error: ", error);
+    }
+  };
+
   return (
     <NFTContextProvider
       value={{
@@ -201,6 +244,7 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
         uploadToIPFS,
         createCollection,
         fetchMyCollections,
+        createNFT,
       }}
     >
       {children}
