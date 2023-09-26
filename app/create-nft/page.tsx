@@ -9,20 +9,14 @@ import { images } from "@/assets/images";
 import { useCurrentNFTContext } from "@/context/NFTContext";
 import { Button, Checkbox, Input, Pagination } from "@/components";
 import { collections } from "@/components/CollectionsTable";
-
-interface INFTFormInput {
-  name: string;
-  description: string;
-  price: string;
-  collection: string | number;
-}
+import { INFTFormInput } from "@/types/INFTContext";
 
 const CreateNFT = () => {
   const [formInput, setFormInput] = useState<INFTFormInput>({
     name: "",
     description: "",
-    price: "",
-    collection: 0,
+    collectionId: 0,
+    price: null,
   });
   const [fileUrl, setFileUrl] = useState<string>("");
   const [listOnMarket, setListOnMarket] = useState<boolean>(false);
@@ -65,6 +59,8 @@ const CreateNFT = () => {
           `,
     [isDragActive, isDragAccept, isDragReject]
   );
+
+  console.log(formInput);
 
   return (
     <div className="flex justify-center p-12 mt-16">
@@ -166,20 +162,20 @@ const CreateNFT = () => {
                   <div
                     key={index}
                     className={`w-full cursor-pointer hover:bg-ether-grey-3 px-6 ${
-                      formInput.collection === collection.collectionId
+                      formInput.collectionId === collection.collectionId
                         ? "bg-ether-grey-3"
                         : ""
                     }`}
                     onClick={() => {
-                      if (formInput.collection === collection.collectionId) {
+                      if (formInput.collectionId === collection.collectionId) {
                         setFormInput({
                           ...formInput,
-                          collection: 0,
+                          collectionId: 0,
                         });
                       } else {
                         setFormInput({
                           ...formInput,
-                          collection: collection.collectionId,
+                          collectionId: collection.collectionId,
                         });
                       }
                     }}

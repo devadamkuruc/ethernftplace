@@ -7,13 +7,13 @@ export interface INFTContext {
   currentAccount: string;
   uploadToIPFS: (file: File, name: string) => Promise<IUploadToIPFSResponse>;
   createCollection: (
-    formInput: IFormCollectionInput,
+    formInput: ICollectionFromInput,
     fileUrl: string,
     router: AppRouterInstance
   ) => Promise<void>;
   fetchMyCollections: () => Promise<IFormattedCollection[]>;
   createNFT: (
-    formInput: IFormNFTInput,
+    formInput: INFTFormInput,
     fileUrl: string,
     router: AppRouterInstance
   ) => Promise<void>;
@@ -24,15 +24,16 @@ export interface IUploadToIPFSResponse {
   message: string;
 }
 
-export interface IFormCollectionInput {
+export interface ICollectionFromInput {
   name: string;
   description: string;
 }
 
-export interface IFormNFTInput {
+export interface INFTFormInput {
   name: string;
   description: string;
-  collectionId: string;
+  collectionId: string | number;
+  price: string | null;
 }
 
 export interface IRawNFT {

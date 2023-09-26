@@ -7,8 +7,8 @@ import axios from "axios";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 
 import {
-  IFormCollectionInput,
-  IFormNFTInput,
+  ICollectionFromInput,
+  INFTFormInput,
   IFormattedCollection,
   INFTContext,
   IRawCollection,
@@ -108,7 +108,7 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const createCollection = async (
-    formInput: IFormCollectionInput,
+    formInput: ICollectionFromInput,
     fileUrl: string,
     router: AppRouterInstance
   ) => {
@@ -194,7 +194,7 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const createNFT = async (
-    formInput: IFormNFTInput,
+    formInput: INFTFormInput,
     fileUrl: string,
     router: AppRouterInstance
   ) => {
@@ -209,7 +209,9 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
 
     const { name, description, collectionId } = formInput;
 
-    if (!name || !description || !collectionId || !fileUrl) return;
+    if (!name || !description || !fileUrl) return;
+
+    console.log(name, description, collectionId, fileUrl);
 
     const data = { name, description, image: fileUrl };
 
