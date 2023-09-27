@@ -18,6 +18,7 @@ contract EtherNFTPlace is ERC721URIStorage {
     mapping(uint256 => Collection) private idToCollection;
     mapping(uint256 => NFT) private idToNFT;
 
+
     struct Collection {
         uint256 collectionId;
         address owner;
@@ -33,7 +34,7 @@ contract EtherNFTPlace is ERC721URIStorage {
 
     event CollectionCreated (
         uint256 indexed collectionId,
-        address owner,
+        address owner,  
         string collectionURI
     );
 
@@ -110,13 +111,13 @@ contract EtherNFTPlace is ERC721URIStorage {
         return newTokenId;
     }
 
-    function fetchNFTsByCollection(uint256 collectionId) public view returns(NFT[] memory) {
+    function fetchMyNFTsByCollection(uint256 collectionId) public view returns(NFT[] memory) {
         uint256 totalNFTCount = _tokenIds.current();
         uint256 nftCount = 0;
         uint256 currentIndex = 0;
 
         for (uint256 i; i <= totalNFTCount; i++) {
-            if (idToNFT[i].collectionId == collectionId) {
+            if (idToNFT[i].collectionId == collectionId && idToNFT[i].owner == msg.sender ) {
                 nftCount++;
             }
         }
@@ -124,7 +125,7 @@ contract EtherNFTPlace is ERC721URIStorage {
         NFT[] memory nfts = new NFT[](nftCount);
 
         for (uint256 i = 1; i <= totalNFTCount; i++) {
-            if (idToNFT[i].collectionId == collectionId) {
+            if (idToNFT[i].collectionId == collectionId && idToNFT[i].owner == msg.sender) {
                 NFT storage currentNFT = idToNFT[i];
                 nfts[currentIndex] = currentNFT;
                 currentIndex++;

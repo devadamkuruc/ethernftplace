@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { useDropzone } from "react-dropzone";
 import { useRouter } from "next/navigation";
@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { images } from "@/assets/images";
 import { useCurrentNFTContext } from "@/context/NFTContext";
 import { Button, Input, NFTCard, Pagination } from "@/components";
+import { IFormattedCollection } from "@/types/INFTContext";
 
 const nfts = [
   {

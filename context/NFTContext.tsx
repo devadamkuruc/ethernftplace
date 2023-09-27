@@ -168,6 +168,8 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
 
     const data = await contract.fetchMyCollections();
 
+    console.log(data);
+
     const collections = await Promise.all(
       data.map(
         async ({ collectionId, owner, collectionURI }: IRawCollection) => {

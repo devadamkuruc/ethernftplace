@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { useDropzone } from "react-dropzone";
 import { useRouter } from "next/navigation";
@@ -9,7 +9,7 @@ import { images } from "@/assets/images";
 import { useCurrentNFTContext } from "@/context/NFTContext";
 import { Button, Checkbox, Input, Pagination } from "@/components";
 import { collections } from "@/components/CollectionsTable";
-import { INFTFormInput } from "@/types/INFTContext";
+import { IFormattedCollection, INFTFormInput } from "@/types/INFTContext";
 
 const CreateNFT = () => {
   const [formInput, setFormInput] = useState<INFTFormInput>({
@@ -20,8 +20,27 @@ const CreateNFT = () => {
   });
   const [fileUrl, setFileUrl] = useState<string>("");
   const [listOnMarket, setListOnMarket] = useState<boolean>(false);
-  const { uploadToIPFS, createNFT } = useCurrentNFTContext();
+  const [myCollections, setMyCollections] = useState<IFormattedCollection[]>(
+    []
+  );
+  const [myCollectionsCopy, setMyCollectionsCopy] = useState<
+    IFormattedCollection[]
+  >([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const { uploadToIPFS, createNFT, fetchMyCollections } =
+    useCurrentNFTContext();
   const router = useRouter();
+
+  useEffect(() => {
+    fetchMyCollections().then((collections) => {
+      console.log(collections);
+      setMyCollections(collections);
+      setMyCollectionsCopy(collections);
+      setIsLoading(false);
+    });
+  }, []);
+
+  console.log(myCollections);
 
   const onDrop = useCallback(
     async (acceptedFile: File[]) => {
@@ -158,7 +177,7 @@ const CreateNFT = () => {
                 </div>
               </div>
               <div className="flex flex-col pb-6">
-                {collections.map((collection, index) => (
+                {myCollections.map((collection, index) => (
                   <div
                     key={index}
                     className={`w-full cursor-pointer hover:bg-ether-grey-3 px-6 ${
@@ -188,18 +207,16 @@ const CreateNFT = () => {
                         <div className="w-8 h-8 overflow-hidden rounded-full">
                           <Image
                             src={collection.image}
+                            width={32}
+                            height={32}
                             alt="collection"
                             className="object-contain"
                           />
                         </div>
                         <div className="ml-3">{collection.name}</div>
                       </div>
-                      <div className="col-span-3 text-white text-sm">
-                        {collection.totalAssets}
-                      </div>
-                      <div className="col-span-3 text-white text-sm">
-                        {collection.owners}
-                      </div>
+                      <div className="col-span-3 text-white text-sm">255</div>
+                      <div className="col-span-3 text-white text-sm">22</div>
                     </div>
                   </div>
                 ))}
