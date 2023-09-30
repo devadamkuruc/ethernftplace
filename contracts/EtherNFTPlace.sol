@@ -49,9 +49,9 @@ contract EtherNFTPlace is ERC721URIStorage {
     }
 
     function createCollection(string memory _collectionURI) external {
-        uint256 collectionId = _collectionIds.current();
-
         _collectionIds.increment();
+
+        uint256 collectionId = _collectionIds.current();
 
         idToCollection[collectionId] = Collection(
             collectionId,
