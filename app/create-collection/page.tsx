@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { images } from "@/assets/images";
 import { useCurrentNFTContext } from "@/context/NFTContext";
 import { Button, Input, NFTCard, Pagination } from "@/components";
-import { IFormattedCollection } from "@/types/INFTContext";
+import { IFormattedCollection, IFormattedNFT } from "@/types/INFTContext";
 
 const nfts = [
   {
@@ -79,9 +79,37 @@ const CreateCollection = () => {
     description: "",
   });
   const [fileUrl, setFileUrl] = useState<string>("");
-  const { uploadToIPFS, createCollection, nftCurrency } =
+  const [myNFTs, setMyNFTs] = useState<IFormattedNFT[]>([]);
+  const [collectionNFTs, setCollectionNFTs] = useState<IFormattedNFT[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { uploadToIPFS, createCollection, nftCurrency, fetchNFTsByCollection } =
     useCurrentNFTContext();
   const router = useRouter();
+
+  useEffect(() => {
+    fetchNFTsByCollection(0).then((nfts) => {
+      setMyNFTs(nfts);
+      setIsLoading(false);
+    });
+  }, []);
+
+  const handleAddNFTToCollection = (clickedNFT: IFormattedNFT) => {
+    setCollectionNFTs((prevCollectionNFTs) => [
+      ...prevCollectionNFTs,
+      clickedNFT,
+    ]);
+
+    setMyNFTs((prevMyNFTs) => prevMyNFTs.filter((nft) => nft !== clickedNFT));
+  };
+
+  const handleRemoveNFTFromCollection = (clickedNFT: IFormattedNFT) => {
+    setCollectionNFTs((prevCollectionNFTs) =>
+      prevCollectionNFTs.filter((nft) => nft !== clickedNFT)
+    );
+
+    setMyNFTs((prevMyNFTs) => [...prevMyNFTs, clickedNFT]);
+  };
 
   const onDrop = useCallback(
     async (acceptedFile: File[]) => {
@@ -203,7 +231,7 @@ const CreateCollection = () => {
           <div className="flex flex-col w-full bg-ether-grey-1 rounded-2xl mt-8">
             <div className="border-b border-b-ether-grey-3 px-6 py-4">
               <h3 className="text-white">
-                NFTs <span>(1000)</span>
+                NFTs <span>({myNFTs.length})</span>
               </h3>
               <span className="text-ether-grey-5 text-sm">
                 Choose NFTs from your wallet
@@ -211,11 +239,12 @@ const CreateCollection = () => {
             </div>
             <div className="flex flex-col w-full rounded-md p-6">
               <div className="grid grid-cols-5 gap-6">
-                {nfts.map((nft, index) => (
+                {myNFTs.map((nft, index) => (
                   <NFTCard
                     nft={nft}
                     nftCurrency={nftCurrency}
                     key={index}
+                    onClick={handleAddNFTToCollection}
                     classStyles="h-108"
                   />
                 ))}
@@ -229,7 +258,7 @@ const CreateCollection = () => {
           <div className="flex flex-col w-full bg-ether-grey-1 rounded-2xl mt-8">
             <div className="border-b border-b-ether-grey-3 px-6 py-4">
               <h3 className="text-white">
-                NFTs <span>(1000)</span>
+                NFTs <span>({collectionNFTs.length})</span>
               </h3>
               <span className="text-ether-grey-5 text-sm">
                 NFTs assigned to the collection
@@ -237,11 +266,12 @@ const CreateCollection = () => {
             </div>
             <div className="flex flex-col w-full rounded-md p-6">
               <div className="grid grid-cols-5 gap-6">
-                {nfts.map((nft, index) => (
+                {collectionNFTs.map((nft, index) => (
                   <NFTCard
                     nft={nft}
                     nftCurrency={nftCurrency}
                     key={index}
+                    onClick={handleRemoveNFTFromCollection}
                     classStyles="h-108"
                   />
                 ))}

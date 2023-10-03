@@ -12,6 +12,8 @@ import {
   IFormattedCollection,
   INFTContext,
   IRawCollection,
+  IFormattedNFT,
+  IRawNFT,
 } from "@/types/INFTContext";
 import { createCtx } from "@/utils";
 import { MarketAddress, MarketAddressABI } from "./constants";
@@ -168,8 +170,6 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
 
     const data = await contract.fetchMyCollections();
 
-    console.log(data);
-
     const collections = await Promise.all(
       data.map(
         async ({ collectionId, owner, collectionURI }: IRawCollection) => {
@@ -213,8 +213,6 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
 
     if (!name || !description || !fileUrl) return;
 
-    console.log(name, description, collectionId, fileUrl);
-
     const data = { name, description, image: fileUrl };
 
     try {
@@ -239,6 +237,42 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const fetchNFTsByCollection = async (
+    collectionId: number
+  ): Promise<IFormattedNFT[]> => {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.BrowserProvider(connection);
+    const signer = await provider.getSigner();
+
+    const contract = fetchContract(signer);
+
+    const data = await contract.fetchMyNFTsByCollection(collectionId);
+
+    const nfts = await Promise.all(
+      data.map(async ({ tokenId, owner, collectionId }: IRawNFT) => {
+        const tokenURI = await contract.tokenURI(tokenId);
+        const {
+          data: { image, name, description },
+        } = await axios.get(tokenURI, {
+          headers: {
+            Accept: "text/plain",
+          },
+        });
+
+        return {
+          collectionId: Number(collectionId),
+          owner,
+          image,
+          name,
+          description,
+        };
+      })
+    );
+
+    return nfts;
+  };
+
   return (
     <NFTContextProvider
       value={{
@@ -249,6 +283,7 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
         createCollection,
         fetchMyCollections,
         createNFT,
+        fetchNFTsByCollection,
       }}
     >
       {children}

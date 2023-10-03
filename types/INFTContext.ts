@@ -17,6 +17,8 @@ export interface INFTContext {
     fileUrl: string,
     router: AppRouterInstance
   ) => Promise<void>;
+
+  fetchNFTsByCollection: (collectionId: number) => Promise<IFormattedNFT[]>;
 }
 
 export interface IUploadToIPFSResponse {
@@ -38,20 +40,18 @@ export interface INFTFormInput {
 
 export interface IRawNFT {
   tokenId: BigNumberish;
-  seller: string;
   owner: string;
-  price: BigNumberish;
+  collectionId: string;
 }
 
 export interface IFormattedNFT {
   tokenId: number;
-  seller: string;
   owner: string;
   image: string;
   name: string;
   description: string;
-  price: string;
   tokenURI: string;
+  collectionId: string;
 }
 
 export interface ICollection {

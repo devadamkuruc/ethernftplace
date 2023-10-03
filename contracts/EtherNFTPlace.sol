@@ -17,13 +17,13 @@ contract EtherNFTPlace is ERC721URIStorage {
 
     mapping(uint256 => Collection) private idToCollection;
     mapping(uint256 => NFT) private idToNFT;
+    mapping(uint256 => uint256[]) private collectionToNFTs;
 
 
     struct Collection {
         uint256 collectionId;
         address owner;
         string collectionURI;
-        uint256[] nfts;
     }
 
     struct NFT {
@@ -56,8 +56,7 @@ contract EtherNFTPlace is ERC721URIStorage {
         idToCollection[collectionId] = Collection(
             collectionId,
             msg.sender,
-            _collectionURI,
-            new uint256[](0)
+            _collectionURI
         );
 
         emit CollectionCreated(collectionId, msg.sender, _collectionURI);
@@ -110,6 +109,31 @@ contract EtherNFTPlace is ERC721URIStorage {
 
         return newTokenId;
     }
+
+    function updateCollectionNFTs(uint256 collectionId, uint256[] memory newNFTs) public {
+    require(idToCollection[collectionId].owner == msg.sender, "Not the owner of the collection");
+
+    uint256[] storage existingNFTs = collectionToNFTs[collectionId];
+
+    for (uint256 i = 0; i < newNFTs.length; i++) {
+        require(_exists(newNFTs[i]), "NFT does not exist");
+        require(idToNFT[newNFTs[i]].owner == msg.sender, "Not the owner of the NFT");
+        require(idToNFT[newNFTs[i]].collectionId == collectionId, "NFT does not belong to the collection");
+
+        bool isDuplicate = false;
+        for (uint256 j = 0; j < existingNFTs.length; j++) {
+            if (existingNFTs[j] == newNFTs[i]) {
+                isDuplicate = true;
+                break;
+            }
+        }
+
+        if (!isDuplicate) {
+            existingNFTs.push(newNFTs[i]);
+        }
+    }
+}
+
 
     function fetchMyNFTsByCollection(uint256 collectionId) public view returns(NFT[] memory) {
         uint256 totalNFTCount = _tokenIds.current();
