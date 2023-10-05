@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 interface Props {
   nft: IFormattedNFT;
   nftCurrency: string;
-  classStyles: string;
+  classStyles?: string;
   onClick?: (nft: IFormattedNFT) => void;
   textXS?: boolean;
 }
@@ -29,12 +29,14 @@ const NFTCard = ({ nft, nftCurrency, classStyles, onClick, textXS }: Props) => {
       className={`flex flex-col col-span-1 cursor-pointer`}
       onClick={handleClick}
     >
-      <div className={`relative overflow-hidden rounded-md ${classStyles} `}>
+      <div
+        className={`relative overflow-hidden rounded-md ${classStyles} pb-[100%] `}
+      >
         <Image
           src={nft.image}
           alt={`nft`}
           fill
-          className="w-full rounded-md object-cover"
+          className="w-full h-full rounded-md object-cover"
         />
       </div>
 

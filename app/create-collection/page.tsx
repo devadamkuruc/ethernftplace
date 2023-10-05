@@ -259,7 +259,7 @@ const CreateCollection = () => {
               </span>
             </div>
             <div className="flex flex-col w-full rounded-md p-6">
-              <div className="grid grid-cols-5 gap-6">
+              <div className="grid grid-cols-8 gap-6">
                 {myNFTs.map((nft, index) => (
                   <NFTCard
                     nft={nft}
@@ -286,7 +286,7 @@ const CreateCollection = () => {
               </span>
             </div>
             <div className="flex flex-col w-full rounded-md p-6">
-              <div className="grid grid-cols-5 gap-6">
+              <div className="grid grid-cols-8 gap-6">
                 {collectionNFTs.map((nft, index) => (
                   <NFTCard
                     nft={nft}

@@ -6,20 +6,10 @@ import { ICollection } from "@/types/INFTContext";
 import { useEffect, useState } from "react";
 
 const Collections = () => {
-  const { currentAccount, fetchCollectionsForUser } = useCurrentNFTContext();
+  const { currentAccount } = useCurrentNFTContext();
   const [collections, setCollections] = useState<ICollection[]>([]);
 
   console.log(currentAccount);
-
-  useEffect(() => {
-    if (currentAccount) {
-      fetchCollectionsForUser(currentAccount, 1, 5).then((items) => {
-        if (items) {
-          setCollections(items);
-        }
-      });
-    }
-  }, [currentAccount]);
 
   return (
     <div className="flex-col flexCenter px-28 py-4 mt-8 mb-16">

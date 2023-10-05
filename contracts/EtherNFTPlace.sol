@@ -149,6 +149,10 @@ contract EtherNFTPlace is ERC721URIStorage {
         return collections;
     }
 
+    function fetchCollectionById(uint256 _collectionId) public view returns (Collection memory) {
+        return idToCollection[_collectionId];
+    }
+
     function createToken(string memory tokenURI, uint256 collectionId) public payable returns (uint) {
         _tokenIds.increment();
 

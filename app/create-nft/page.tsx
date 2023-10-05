@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 import { images } from "@/assets/images";
 import { useCurrentNFTContext } from "@/context/NFTContext";
 import { Button, Checkbox, Input, Pagination } from "@/components";
-import { collections } from "@/components/CollectionsTable";
 import { IFormattedCollection, INFTFormInput } from "@/types/INFTContext";
 
 const CreateNFT = () => {

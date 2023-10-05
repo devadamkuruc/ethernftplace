@@ -12,6 +12,9 @@ export interface INFTContext {
     router: AppRouterInstance
   ) => Promise<void>;
   fetchMyCollections: () => Promise<IFormattedCollection[]>;
+  fetchCollectionById: (
+    collectionId: number
+  ) => Promise<IFormattedCollection | null>;
   createNFT: (
     formInput: INFTFormInput,
     fileUrl: string,

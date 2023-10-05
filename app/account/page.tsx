@@ -13,21 +13,30 @@ import {
 import { useCurrentNFTContext } from "@/context/NFTContext";
 import { creators } from "@/components/TopCreatorsSection";
 import Image from "next/image";
-import { IFormattedCollection } from "@/types/INFTContext";
+import { IFormattedCollection, IFormattedNFT } from "@/types/INFTContext";
 
 const AccountDetails = () => {
-  const { nftCurrency, fetchMyCollections, currentAccount } =
+  const { nftCurrency, fetchMyCollections, fetchNFTsByCollection } =
     useCurrentNFTContext();
   const [copyStatus, setCopyStatus] = useState<string>("");
-  const [collections, setCollections] = useState<IFormattedCollection[]>([]);
+  const [myCollections, setMyCollections] = useState<IFormattedCollection[]>(
+    []
+  );
+  const [myNFTs, setMyNFTs] = useState<IFormattedNFT[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetchMyCollections().then((collections) => {
-      setCollections(collections);
+      setMyCollections(collections);
     });
   }, []);
 
-  console.log(collections);
+  useEffect(() => {
+    fetchNFTsByCollection(0).then((nfts) => {
+      setMyNFTs(nfts);
+      setIsLoading(false);
+    });
+  }, []);
 
   const copyToClipboard = async () => {
     try {
@@ -91,13 +100,9 @@ const AccountDetails = () => {
           </div>
         </div>
       </div>
-      <CollectionsTable />
+      <CollectionsTable collections={myCollections} />
 
-      <NFTsTable
-        nftCardClassStyles="h-188"
-        tableClassStyles="mt-8"
-        accountDetail
-      />
+      <NFTsTable tableClassStyles="mt-8" accountDetail nfts={myNFTs} />
 
       <AccountsTable />
     </div>

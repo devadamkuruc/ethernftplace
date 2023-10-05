@@ -197,6 +197,42 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
     return collections;
   };
 
+  const fetchCollectionById = async (
+    collectionId: number
+  ): Promise<IFormattedCollection | null> => {
+    try {
+      const web3Modal = new Web3Modal();
+      const connection = await web3Modal.connect();
+      const provider = new ethers.BrowserProvider(connection);
+      const signer = await provider.getSigner();
+
+      const contract = fetchContract(signer);
+
+      const { owner, collectionURI } = await contract.fetchCollectionById(
+        collectionId
+      );
+
+      const {
+        data: { image, name, description },
+      } = await axios.get(collectionURI, {
+        headers: {
+          Accept: "text/plain",
+        },
+      });
+
+      return {
+        collectionId: Number(collectionId),
+        owner,
+        image,
+        name,
+        description,
+      };
+    } catch (error) {
+      console.error("Error fetching collection by ID", error);
+      return null;
+    }
+  };
+
   const createNFT = async (
     formInput: INFTFormInput,
     fileUrl: string,
@@ -286,6 +322,7 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
         uploadToIPFS,
         createCollection,
         fetchMyCollections,
+        fetchCollectionById,
         createNFT,
         fetchNFTsByCollection,
       }}

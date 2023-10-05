@@ -4,7 +4,9 @@ import NFTCard from "./NFTCard";
 import { images } from "@/assets/images";
 import { useCurrentNFTContext } from "@/context/NFTContext";
 import { Pagination } from "@/components";
+import { IFormattedNFT } from "@/types/INFTContext";
 
+/*
 export const nfts = [
   {
     name: "Editorial.. #1395",
@@ -66,20 +68,16 @@ export const nfts = [
     currency: "ETH",
     image: images.painting10,
   },
-];
+];*/
 
 interface Props {
-  nftCardClassStyles: string;
   tableClassStyles?: string;
   accountDetail?: boolean;
   noCollection?: boolean;
+  nfts: IFormattedNFT[];
 }
 
-const NFTsTable = ({
-  nftCardClassStyles,
-  tableClassStyles,
-  noCollection,
-}: Props) => {
+const NFTsTable = ({ tableClassStyles, noCollection, nfts }: Props) => {
   const { nftCurrency } = useCurrentNFTContext();
 
   return (
@@ -88,7 +86,7 @@ const NFTsTable = ({
     >
       <div className="border-b border-b-ether-grey-3 px-6 py-4">
         <h3 className="text-white">
-          NFTs <span className="text-xs">(1000)</span>
+          NFTs <span className="text-xs">({nfts.length})</span>
         </h3>
         {noCollection ? (
           <span className="text-ether-grey-5 text-sm">
@@ -99,15 +97,12 @@ const NFTsTable = ({
         )}
       </div>
       <div className="flex flex-col w-full rounded-md p-6">
-        <div className="grid grid-cols-6 gap-6">
-          {nfts.map((nft, index) => (
-            <NFTCard
-              nft={nft}
-              nftCurrency={nftCurrency}
-              key={index}
-              classStyles={nftCardClassStyles}
-            />
-          ))}
+        <div className="grid grid-cols-8 gap-6">
+          {nfts
+            ? nfts.map((nft, index) => (
+                <NFTCard nft={nft} nftCurrency={nftCurrency} key={index} />
+              ))
+            : ""}
         </div>
       </div>
       <div className="pb-6 px-6 w-full flex justify-end">
