@@ -259,14 +259,14 @@ const CreateCollection = () => {
               </span>
             </div>
             <div className="flex flex-col w-full rounded-md p-6">
-              <div className="grid grid-cols-10 gap-6">
+              <div className="grid grid-cols-5 gap-6">
                 {myNFTs.map((nft, index) => (
                   <NFTCard
                     nft={nft}
                     nftCurrency={nftCurrency}
                     key={index}
                     onClick={handleAddNFTToCollection}
-                    classStyles="h-108"
+                    classStyles="h-108 w-108"
                   />
                 ))}
               </div>
@@ -286,14 +286,14 @@ const CreateCollection = () => {
               </span>
             </div>
             <div className="flex flex-col w-full rounded-md p-6">
-              <div className="grid grid-cols-10 gap-6">
+              <div className="grid grid-cols-5 gap-6">
                 {collectionNFTs.map((nft, index) => (
                   <NFTCard
                     nft={nft}
                     nftCurrency={nftCurrency}
                     key={index}
                     onClick={handleRemoveNFTFromCollection}
-                    classStyles="h-108"
+                    classStyles="h-108 w-108"
                   />
                 ))}
               </div>
