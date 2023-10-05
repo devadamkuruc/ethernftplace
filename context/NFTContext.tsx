@@ -123,7 +123,9 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
 
     const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
 
-    const { name, description } = formInput;
+    const { name, description, nfts } = formInput;
+
+    console.log(formInput);
 
     if (!name || !description || !fileUrl) {
       console.log("Missing input parameters!");
@@ -150,7 +152,7 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
       const ipfsHash = response.data.IpfsHash;
       const urlWithHash = "https://gateway.pinata.cloud/ipfs/" + ipfsHash;
 
-      const transaction = await contract.createCollection(urlWithHash);
+      const transaction = await contract.createCollection(urlWithHash, nfts);
 
       await transaction.wait();
 
@@ -261,6 +263,8 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
         });
 
         return {
+          tokenId,
+          tokenURI,
           collectionId: Number(collectionId),
           owner,
           image,

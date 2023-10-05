@@ -38,17 +38,29 @@ contract EtherNFTPlace is ERC721URIStorage {
         string collectionURI
     );
 
+    event CollectionMetadataUpdated (
+        uint256 indexed collectionId,
+        address owner,
+        string collectionURI
+    );
+
     event NFTCreated (
         uint indexed tokenId,
         address owner,
         uint256 collectionId
     );
 
+    event NFTsCollectionUpdated (
+      uint256[] nftIds,
+      address owner,
+      uint256 collectionId  
+    );
+
     constructor() ERC721("Metaverse Tokens", "METT") {
         owner = payable(msg.sender);
     }
 
-    function createCollection(string memory _collectionURI) external {
+    function createCollection(string memory _collectionURI, uint256[] memory selectedNFTs) external {
         _collectionIds.increment();
 
         uint256 collectionId = _collectionIds.current();
@@ -60,8 +72,54 @@ contract EtherNFTPlace is ERC721URIStorage {
         );
 
         emit CollectionCreated(collectionId, msg.sender, _collectionURI);
+
+        if (selectedNFTs.length > 0) {    
+            for (uint256 i = 0; i < selectedNFTs.length; i++) {
+                uint256 nftId = selectedNFTs[i];
+
+                require(_exists(nftId), "NFT does not exist");
+                require(idToNFT[nftId].owner == msg.sender, "Not the owner of the NFT");
+
+                idToNFT[nftId].collectionId = collectionId;
+            }
+
+            emit NFTsCollectionUpdated(selectedNFTs, msg.sender, collectionId);
+        }
     }
 
+    function updateCollection(uint256 collectionId, uint256[] memory selectedNFTs, string memory _newCollectionURI) public {
+        require(idToCollection[collectionId].owner == msg.sender, "Not the owner of the collection");
+
+        uint256[] storage existingNFTs = collectionToNFTs[collectionId];
+
+        idToCollection[collectionId].collectionURI = _newCollectionURI;
+
+        emit CollectionMetadataUpdated(collectionId, msg.sender, _newCollectionURI);
+
+        if ( selectedNFTs.length > 0) {
+            for (uint256 i = 0; i < selectedNFTs.length; i++) {
+                uint256 nftId = selectedNFTs[i];
+
+                require(_exists(nftId), "NFT does not exist");
+                require(idToNFT[nftId].owner == msg.sender, "Not the owner of the NFT");
+                require(idToNFT[nftId].collectionId == collectionId, "NFT does not belong to the collection");
+
+                bool isDuplicate = false;
+                for (uint256 j = 0; j < existingNFTs.length; j++) {
+                    if (existingNFTs[j] == nftId) {
+                        isDuplicate = true;
+                        break;
+                    }
+                }
+
+                if (!isDuplicate) {
+                    existingNFTs.push(nftId);
+                }
+            }
+
+            emit NFTsCollectionUpdated(selectedNFTs, msg.sender, collectionId);
+        }
+    }
 
     function fetchMyCollections() public view returns (Collection[] memory) {
         uint totalCollectionCount = _collectionIds.current();
@@ -80,7 +138,7 @@ contract EtherNFTPlace is ERC721URIStorage {
             if (idToCollection[i+1].owner == msg.sender) {
                 uint currentId = i + 1;
 
-                Collection storage currentCollection = idToCollection[currentId];
+                Collection memory currentCollection = idToCollection[currentId];
 
                 collections[currentIndex] = currentCollection;
 
@@ -109,31 +167,6 @@ contract EtherNFTPlace is ERC721URIStorage {
 
         return newTokenId;
     }
-
-    function updateCollectionNFTs(uint256 collectionId, uint256[] memory newNFTs) public {
-    require(idToCollection[collectionId].owner == msg.sender, "Not the owner of the collection");
-
-    uint256[] storage existingNFTs = collectionToNFTs[collectionId];
-
-    for (uint256 i = 0; i < newNFTs.length; i++) {
-        require(_exists(newNFTs[i]), "NFT does not exist");
-        require(idToNFT[newNFTs[i]].owner == msg.sender, "Not the owner of the NFT");
-        require(idToNFT[newNFTs[i]].collectionId == collectionId, "NFT does not belong to the collection");
-
-        bool isDuplicate = false;
-        for (uint256 j = 0; j < existingNFTs.length; j++) {
-            if (existingNFTs[j] == newNFTs[i]) {
-                isDuplicate = true;
-                break;
-            }
-        }
-
-        if (!isDuplicate) {
-            existingNFTs.push(newNFTs[i]);
-        }
-    }
-}
-
 
     function fetchMyNFTsByCollection(uint256 collectionId) public view returns(NFT[] memory) {
         uint256 totalNFTCount = _tokenIds.current();

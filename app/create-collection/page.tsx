@@ -8,7 +8,11 @@ import { useRouter } from "next/navigation";
 import { images } from "@/assets/images";
 import { useCurrentNFTContext } from "@/context/NFTContext";
 import { Button, Input, NFTCard, Pagination } from "@/components";
-import { IFormattedCollection, IFormattedNFT } from "@/types/INFTContext";
+import {
+  ICollectionFromInput,
+  IFormattedCollection,
+  IFormattedNFT,
+} from "@/types/INFTContext";
 
 const nfts = [
   {
@@ -74,13 +78,15 @@ const nfts = [
 ];
 
 const CreateCollection = () => {
-  const [formInput, setFormInput] = useState({
+  const [formInput, setFormInput] = useState<ICollectionFromInput>({
     name: "",
     description: "",
+    nfts: [],
   });
   const [fileUrl, setFileUrl] = useState<string>("");
   const [myNFTs, setMyNFTs] = useState<IFormattedNFT[]>([]);
   const [collectionNFTs, setCollectionNFTs] = useState<IFormattedNFT[]>([]);
+  const [tokenIds, setTokenIds] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const { uploadToIPFS, createCollection, nftCurrency, fetchNFTsByCollection } =
@@ -94,6 +100,13 @@ const CreateCollection = () => {
     });
   }, []);
 
+  useEffect(() => {
+    setFormInput((prevFormInput) => ({
+      ...prevFormInput,
+      nfts: tokenIds,
+    }));
+  }, [tokenIds]);
+
   const handleAddNFTToCollection = (clickedNFT: IFormattedNFT) => {
     setCollectionNFTs((prevCollectionNFTs) => [
       ...prevCollectionNFTs,
@@ -101,6 +114,8 @@ const CreateCollection = () => {
     ]);
 
     setMyNFTs((prevMyNFTs) => prevMyNFTs.filter((nft) => nft !== clickedNFT));
+
+    setTokenIds((prevTokenIds) => [...prevTokenIds, clickedNFT.tokenId]);
   };
 
   const handleRemoveNFTFromCollection = (clickedNFT: IFormattedNFT) => {
@@ -109,7 +124,13 @@ const CreateCollection = () => {
     );
 
     setMyNFTs((prevMyNFTs) => [...prevMyNFTs, clickedNFT]);
+
+    setTokenIds((prevTokenIds) =>
+      prevTokenIds.filter((tokenId) => tokenId !== clickedNFT.tokenId)
+    );
   };
+
+  console.log(tokenIds);
 
   const onDrop = useCallback(
     async (acceptedFile: File[]) => {
@@ -238,7 +259,7 @@ const CreateCollection = () => {
               </span>
             </div>
             <div className="flex flex-col w-full rounded-md p-6">
-              <div className="grid grid-cols-5 gap-6">
+              <div className="grid grid-cols-10 gap-6">
                 {myNFTs.map((nft, index) => (
                   <NFTCard
                     nft={nft}
@@ -265,7 +286,7 @@ const CreateCollection = () => {
               </span>
             </div>
             <div className="flex flex-col w-full rounded-md p-6">
-              <div className="grid grid-cols-5 gap-6">
+              <div className="grid grid-cols-10 gap-6">
                 {collectionNFTs.map((nft, index) => (
                   <NFTCard
                     nft={nft}
