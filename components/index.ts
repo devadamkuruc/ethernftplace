@@ -16,6 +16,7 @@ import Searchbar from "./Searchbar";
 import Banner from "./Banner";
 import NFTsTable from "./NFTsTable";
 import AccountsTable from "./AccountsTable";
+import OfferModal from "./OfferModal";
 
 export {
   Header,
@@ -36,4 +37,5 @@ export {
   Banner,
   NFTsTable,
   AccountsTable,
+  OfferModal,
 };

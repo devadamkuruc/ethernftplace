@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, NFTCard, Pagination } from "@/components";
+import { Button, NFTCard, OfferModal, Pagination } from "@/components";
 import OffersTable from "@/components/OffersTable";
 import { useCurrentNFTContext } from "@/context/NFTContext";
 import { IFormattedNFT } from "@/types/INFTContext";
@@ -15,6 +15,7 @@ const NFTDetail = ({ params }: { params: { id: number } }) => {
   const [NFT, setNFT] = useState<IFormattedNFT>();
   const [usdPrice, setUsdPrice] = useState<string | null>(null);
   const [collectionNFTs, setCollectionNFTs] = useState<IFormattedNFT[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     fetchNFTDetails(params.id).then((nft) => {
@@ -33,9 +34,12 @@ const NFTDetail = ({ params }: { params: { id: number } }) => {
     });
   }, []);
 
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   if (NFT) {
     return (
-      <div className="flexCenter flex-col px-28 py-4 mt-8 mb-16">
+      <div className="flexCenter flex-col px-28 py-4 mt-8 mb-16 w-full">
         <div className="flexCenter gap-10 w-full h-screen">
           <div className="relative flex w-[50%] h-[85%] rounded-md overflow-hidden">
             <Image
@@ -95,7 +99,7 @@ const NFTDetail = ({ params }: { params: { id: number } }) => {
                 btnName="Make offer"
                 classStyles="rounded-md flex-1 hover:bg-ether-grey-3"
                 ghost
-                handleClick={() => {}}
+                handleClick={openModal}
               />
             </div>
 
@@ -132,6 +136,8 @@ const NFTDetail = ({ params }: { params: { id: number } }) => {
             <Pagination />
           </div>
         </div>
+
+        <OfferModal isOpen={isModalOpen} onClose={closeModal} nft={NFT} />
       </div>
     );
   } else {

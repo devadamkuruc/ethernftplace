@@ -28,6 +28,14 @@ export interface INFTContext {
   ) => Promise<void>;
   fetchListedNFTs: () => Promise<IFormattedNFT[]>;
   fetchNFTDetails: (tokenId: number) => Promise<IFormattedNFT>;
+  makeOffer: (
+    tokenId: number,
+    amount: string,
+    expirationDays: number
+  ) => Promise<void>;
+  fetchOffersByTokenId: (tokenId: number) => Promise<any>;
+  fetchOffersByAddress: (address: string) => Promise<any>;
+  removeExpiredOffers: (tokenId: number) => Promise<void>;
 }
 
 export interface IUploadToIPFSResponse {

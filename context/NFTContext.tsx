@@ -412,11 +412,7 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
       },
     });
 
-    console.log(price);
-
     const formattedPrice = ethers.formatUnits(price.toString(), "ether");
-
-    console.log(formattedPrice);
 
     return {
       tokenId: Number(tokenId),
@@ -428,6 +424,69 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
       description,
       tokenURI,
     };
+  };
+
+  const makeOffer = async (
+    tokenId: number,
+    amount: string,
+    expirationDays: number
+  ) => {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.BrowserProvider(connection);
+    const signer = await provider.getSigner();
+
+    const contract = fetchContract(signer);
+
+    const parsedAmount = ethers.parseUnits(amount, "ether");
+
+    const transaction = await contract.makeOffer(
+      tokenId,
+      parsedAmount,
+      expirationDays,
+      {
+        value: parsedAmount.toString(),
+      }
+    );
+
+    await transaction.wait();
+  };
+
+  const fetchOffersByTokenId = async (tokenId: number) => {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.BrowserProvider(connection);
+    const signer = await provider.getSigner();
+
+    const contract = fetchContract(signer);
+
+    const offers = await contract.getOffersByTokenId(tokenId);
+
+    return offers;
+  };
+
+  const fetchOffersByAddress = async (address: string) => {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.BrowserProvider(connection);
+    const signer = await provider.getSigner();
+
+    const contract = fetchContract(signer);
+
+    const offers = await contract.getOffersByTokenId(address);
+
+    return offers;
+  };
+
+  const removeExpiredOffers = async (tokenId: number) => {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.BrowserProvider(connection);
+    const signer = await provider.getSigner();
+
+    const contract = fetchContract(signer);
+
+    await contract.removeExpiredOffers(tokenId);
   };
 
   return (
@@ -445,6 +504,10 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
         listNFTForSale,
         fetchListedNFTs,
         fetchNFTDetails,
+        makeOffer,
+        fetchOffersByTokenId,
+        fetchOffersByAddress,
+        removeExpiredOffers,
       }}
     >
       {children}
