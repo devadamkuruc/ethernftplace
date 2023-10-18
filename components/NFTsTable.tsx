@@ -86,7 +86,7 @@ const NFTsTable = ({ tableClassStyles, noCollection, nfts }: Props) => {
     >
       <div className="border-b border-b-ether-grey-3 px-6 py-4">
         <h3 className="text-white">
-          NFTs <span className="text-xs">({nfts.length})</span>
+          NFTs <span className="text-xs">{nfts ? `(${nfts.length})` : ""}</span>
         </h3>
         {noCollection ? (
           <span className="text-ether-grey-5 text-sm">

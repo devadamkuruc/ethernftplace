@@ -12,13 +12,18 @@ contract EtherNFTPlace is ERC721URIStorage {
 
     Counters.Counter private _tokenIds;
     Counters.Counter private _collectionIds;
+    Counters.Counter private _itemsSold;
+
+    uint256 listingPrice = 0.025 ether;
 
     address payable owner;
 
     mapping(uint256 => Collection) private idToCollection;
     mapping(uint256 => NFT) private idToNFT;
+    mapping(uint256 => MarketItem) private idToMarketItem;
     mapping(uint256 => uint256[]) private collectionToNFTs;
-
+    mapping(uint256 => Offer[]) private tokenIdToOffers;
+    mapping(address => Offer[]) private addressToOffers;
 
     struct Collection {
         uint256 collectionId;
@@ -26,11 +31,34 @@ contract EtherNFTPlace is ERC721URIStorage {
         string collectionURI;
     }
 
+    struct Offer {
+        address bidder;
+        uint256 amount;
+        uint256 expirationTimestamp;
+    }
+
     struct NFT {
         uint256 tokenId;
         address owner;
         uint256 collectionId;
+        uint256 price;
     }
+
+    struct MarketItem {
+        uint256 tokenId;
+        address payable seller;
+        address payable owner;
+        uint256 price;
+        bool sold;
+    }
+
+    event MarketItemCreated (
+        uint256 indexed tokenId,
+        address seller,
+        address owner,
+        uint256 price,
+        bool sold
+    );
 
     event CollectionCreated (
         uint256 indexed collectionId,
@@ -47,7 +75,8 @@ contract EtherNFTPlace is ERC721URIStorage {
     event NFTCreated (
         uint indexed tokenId,
         address owner,
-        uint256 collectionId
+        uint256 collectionId,
+        uint256 price
     );
 
     event NFTsCollectionUpdated (
@@ -56,8 +85,30 @@ contract EtherNFTPlace is ERC721URIStorage {
       uint256 collectionId  
     );
 
+    event OfferCreated (
+        uint256 indexed tokenId,
+        address indexed bidder,
+        uint256 amount,
+        uint256 expirationTimestamp
+    );
+
+    event OfferRemoved (
+        uint256 indexed tokenId,
+        address indexed bidder
+    );
+
     constructor() ERC721("Metaverse Tokens", "METT") {
         owner = payable(msg.sender);
+    }
+
+    function updateListingPrice(uint _listingPrice) public payable {
+        require(owner == msg.sender, "Only marketplace owner can update the listing price");
+
+        listingPrice = _listingPrice;
+    }
+
+    function getListingPrice() public view returns (uint256) {
+        return listingPrice;
     }
 
     function createCollection(string memory _collectionURI, uint256[] memory selectedNFTs) external {
@@ -153,7 +204,7 @@ contract EtherNFTPlace is ERC721URIStorage {
         return idToCollection[_collectionId];
     }
 
-    function createToken(string memory tokenURI, uint256 collectionId) public payable returns (uint) {
+    function createToken(string memory tokenURI, uint256 collectionId, uint256 price) public payable returns (uint) {
         _tokenIds.increment();
 
         uint256 newTokenId = _tokenIds.current();
@@ -164,10 +215,11 @@ contract EtherNFTPlace is ERC721URIStorage {
         idToNFT[newTokenId] = NFT(
             newTokenId,
             msg.sender,
-            collectionId
+            collectionId,
+            price
         );
 
-        emit NFTCreated(newTokenId, msg.sender, collectionId);
+        emit NFTCreated(newTokenId, msg.sender, collectionId, price);
 
         return newTokenId;
     }
@@ -194,6 +246,135 @@ contract EtherNFTPlace is ERC721URIStorage {
         }
 
         return nfts;
+    }
+
+    function listNFTForSale(uint256 tokenId, uint256 salePrice) private {
+        require(_exists(tokenId), "NFT does not exist");
+        require(idToNFT[tokenId].owner == msg.sender, "Only item owner can perform this operation");
+        require(salePrice > 0, "Price must be higher then 0");
+        require(msg.value == listingPrice, "Price must be equal to listing price");
+
+        idToNFT[tokenId].owner = address(this);
+        idToNFT[tokenId].price = salePrice;
+
+        idToMarketItem[tokenId] = MarketItem({
+            tokenId: tokenId,
+            seller: payable(msg.sender),
+            owner: payable(address(this)),
+            price: salePrice,
+            sold: false
+        });
+
+        _transfer(msg.sender, address(this), tokenId);
+
+        emit MarketItemCreated(tokenId, msg.sender, address(this), salePrice, false);
+    }
+
+    function resellNFT(uint256 tokenId, uint256 price) public payable {
+        require(idToMarketItem[tokenId].owner == msg.sender, "Only item owner can perform this operation");
+        require(idToNFT[tokenId].owner == msg.sender, "Only item owner can perform this operation");
+        require(msg.value == listingPrice, "Price must be qual to listing price");
+
+        idToNFT[tokenId].owner = address(this);
+        idToNFT[tokenId].price = price;
+
+        idToMarketItem[tokenId].sold = false;
+        idToMarketItem[tokenId].price = price;
+        idToMarketItem[tokenId].seller = payable(msg.sender);
+        idToMarketItem[tokenId].owner = payable(address(this));
+        
+        _itemsSold.decrement();
+
+        _transfer(msg.sender, address(this), tokenId);
+    }
+
+    function createMarketSale(uint256 tokenId) public payable {
+        uint price = idToMarketItem[tokenId].price;
+
+        require(msg.value == price, "Please submit the asking price in order to complete the purchase");
+
+        idToNFT[tokenId].owner = msg.sender;
+
+        idToMarketItem[tokenId].owner = payable(msg.sender);
+        idToMarketItem[tokenId].sold = true;
+        idToMarketItem[tokenId].seller = payable(address(0));
+
+        _itemsSold.increment();
+
+        _transfer(address(this), msg.sender, tokenId);
+
+        payable(owner).transfer(listingPrice);
+        payable(idToMarketItem[tokenId].seller).transfer(msg.value);
+    }
+
+    function fetchMarketItems() public view returns (MarketItem[] memory) {
+        uint itemCount = _tokenIds.current();
+        uint unsoldItemCount = _tokenIds.current() - _itemsSold.current();
+        uint currentIndex = 0;
+
+        MarketItem[] memory items = new MarketItem[](unsoldItemCount);
+
+        for(uint i = 1; i < itemCount; i++) {
+            if(idToMarketItem[i+1].owner == address(this)) {
+                uint currentId = i + 1;
+
+                MarketItem storage currentItem = idToMarketItem[currentId];
+
+                items[currentIndex] = currentItem;
+
+                currentIndex += 1;
+            }
+        }
+
+        return items;
+    }
+
+    function fetchNFTDetails(uint256 tokenId) public view returns (NFT memory) {
+        require(_exists(tokenId), "NFT does not exist");
+
+        NFT memory nftDetails = idToNFT[tokenId];
+        return nftDetails;
+    }
+
+    function makeOffer(uint256 tokenId, uint256 expirationDays) public payable {
+        require(_exists(tokenId), "NFT does not exists");
+        require(expirationDays > 0, "Expiration days must be greater then 0");
+
+        uint256 amount = msg.value;
+        uint256 expirationTimestamp = block.timestamp + (expirationDays * 1 days);
+
+        removeExpiredOffers(tokenId);
+
+        tokenIdToOffers[tokenId].push(Offer(msg.sender, amount, expirationTimestamp));
+        addressToOffers[msg.sender].push(Offer(msg.sender, amount, expirationTimestamp));
+
+        emit OfferCreated(tokenId, msg.sender, amount, expirationTimestamp);
+    }
+
+    function removeExpiredOffers(uint256 tokenId) internal {
+        Offer[] storage offers = tokenIdToOffers[tokenId];
+        uint256 i = 0;
+
+        while (i < offers.length) {
+            if (block.timestamp >= offers[i].expirationTimestamp) {
+                if (i < offers.length - 1) {
+                    offers[i] = offers[offers.length - 1];
+                }
+                offers.pop();
+
+                emit OfferRemoved(tokenId, msg.sender);
+            } else {
+                i++;
+            }
+        }
+    }
+
+    function getOffersByTokenId(uint256 tokenId) public view returns (Offer[] memory) {
+        return tokenIdToOffers[tokenId];
+    }
+
+    function getOffersByAddress(address bidderAddress) public view returns (Offer[] memory) {
+        return addressToOffers[bidderAddress];
     }
 
 }

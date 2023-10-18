@@ -247,9 +247,11 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
 
     const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
 
-    const { name, description, collectionId } = formInput;
+    const { name, description, collectionId, formInputPrice } = formInput;
 
-    if (!name || !description || !fileUrl) return;
+    if (!name || !description || !formInputPrice || !fileUrl) return;
+
+    const price = ethers.parseUnits(formInputPrice, "ether");
 
     const data = { name, description, image: fileUrl };
 
@@ -264,7 +266,11 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
       const ipfsHash = response.data.IpfsHash;
       const urlWithHash = "https://gateway.pinata.cloud/ipfs/" + ipfsHash;
 
-      const transaction = await contract.createToken(urlWithHash, collectionId);
+      const transaction = await contract.createToken(
+        urlWithHash,
+        collectionId,
+        price
+      );
 
       await transaction.wait();
 
@@ -313,6 +319,117 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
     return nfts;
   };
 
+  const listNFTForSale = async (
+    formInputPrice: string,
+    isReselling?: boolean,
+    id?: string
+  ) => {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.BrowserProvider(connection);
+    const signer = await provider.getSigner();
+
+    const price = ethers.parseUnits(formInputPrice, "ether");
+    const contract = fetchContract(signer);
+    const listingPrice = await contract.getListingPrice();
+
+    const transaction = !isReselling
+      ? await contract.listNFTForSale(id, price, {
+          value: listingPrice.toString(),
+        })
+      : await contract.resellToken(id, price, {
+          value: listingPrice.toString(),
+        });
+
+    await transaction.wait();
+  };
+
+  const fetchListedNFTs = async (): Promise<IFormattedNFT[]> => {
+    const provider = new ethers.JsonRpcProvider();
+    const contract = fetchContract(provider);
+
+    const data = await contract.fetchMarketItems();
+
+    const items = await Promise.all(
+      data.map(
+        async ({
+          tokenId,
+          seller,
+          owner,
+          price: unformattedPrice,
+          collectionId,
+        }: IRawNFT) => {
+          const tokenURI = await contract.tokenURI(tokenId);
+
+          const {
+            data: { image, name, description },
+          } = await axios.get(tokenURI, {
+            headers: {
+              Accept: "text/plain",
+            },
+          });
+
+          const price = ethers.formatUnits(
+            unformattedPrice.toString(),
+            "ether"
+          );
+
+          return {
+            price,
+            tokenId: Number(tokenId),
+            seller,
+            owner,
+            image,
+            name,
+            description,
+            tokenURI,
+            collectionId,
+          };
+        }
+      )
+    );
+    return items;
+  };
+
+  const fetchNFTDetails = async (tokenId: number): Promise<IFormattedNFT> => {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.BrowserProvider(connection);
+    const signer = await provider.getSigner();
+
+    const contract = fetchContract(signer);
+
+    const { owner, collectionId, price } = await contract.fetchNFTDetails(
+      tokenId
+    );
+    const tokenURI = await contract.tokenURI(tokenId);
+
+    const {
+      data: { image, name, description },
+    } = await axios.get(tokenURI, {
+      headers: {
+        Accept: "text/plain",
+      },
+    });
+
+    console.log(price);
+
+    const formattedPrice = ethers.formatUnits(price.toString(), "ether");
+
+    console.log(formattedPrice);
+
+    return {
+      tokenId: Number(tokenId),
+      owner,
+      collectionId: collectionId,
+      price: formattedPrice,
+      image,
+      name,
+      description,
+      tokenURI,
+    };
+  };
+
   return (
     <NFTContextProvider
       value={{
@@ -325,6 +442,9 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
         fetchCollectionById,
         createNFT,
         fetchNFTsByCollection,
+        listNFTForSale,
+        fetchListedNFTs,
+        fetchNFTDetails,
       }}
     >
       {children}

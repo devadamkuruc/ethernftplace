@@ -15,7 +15,7 @@ const CreateNFT = () => {
     name: "",
     description: "",
     collectionId: 0,
-    price: null,
+    formInputPrice: "0",
   });
   const [fileUrl, setFileUrl] = useState<string>("");
   const [listOnMarket, setListOnMarket] = useState<boolean>(false);
@@ -32,14 +32,11 @@ const CreateNFT = () => {
 
   useEffect(() => {
     fetchMyCollections().then((collections) => {
-      console.log(collections);
       setMyCollections(collections);
       setMyCollectionsCopy(collections);
       setIsLoading(false);
     });
   }, []);
-
-  console.log(myCollections);
 
   const onDrop = useCallback(
     async (acceptedFile: File[]) => {
@@ -77,8 +74,6 @@ const CreateNFT = () => {
           `,
     [isDragActive, isDragAccept, isDragReject]
   );
-
-  console.log(formInput);
 
   return (
     <div className="flex justify-center p-12 mt-16">
@@ -147,6 +142,15 @@ const CreateNFT = () => {
           placeholder="NFT Description"
           handleClick={(e) =>
             setFormInput({ ...formInput, description: e.target.value })
+          }
+        />
+
+        <Input
+          inputType="number"
+          title="Price"
+          placeholder="NFT Price"
+          handleClick={(e) =>
+            setFormInput({ ...formInput, formInputPrice: e.target.value })
           }
         />
 
@@ -235,18 +239,6 @@ const CreateNFT = () => {
             checked={listOnMarket}
           />
         </div>
-        {listOnMarket ? (
-          <Input
-            inputType="number"
-            title="Price"
-            placeholder="NFT Price"
-            handleClick={(e) =>
-              setFormInput({ ...formInput, price: e.target.value })
-            }
-          />
-        ) : (
-          ""
-        )}
 
         <div className="mt-16 w-full flex justify-end">
           <Button
