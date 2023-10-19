@@ -91,10 +91,11 @@ const CreateNFT = () => {
           Create new NFT
         </h1>
         <div className="text-white text-sm">
-          Once your item is minted you will not be able to change any of its
-          information
+          Once your item is minted you will not be able to change name or
+          description
         </div>
       </div>
+
       <div className="flex gap-28 w-4/5 h-screen">
         <div className="flex justify-center w-[45%] h-[65%]">
           <div className="relative flex w-full h-full rounded-md overflow-hidden">
