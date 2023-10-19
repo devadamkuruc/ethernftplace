@@ -37,6 +37,7 @@ export interface INFTContext {
   fetchOffersByAddress: (address: string) => Promise<any>;
   removeExpiredOffers: (tokenId: number) => Promise<void>;
   getWalletBalance: () => Promise<string>;
+  removeFromIPFS: (cid: string) => Promise<void>;
 }
 
 export interface IUploadToIPFSResponse {

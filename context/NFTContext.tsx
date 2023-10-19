@@ -67,6 +67,27 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const removeFromIPFS = async (cid: string) => {
+    const url = `https://api.pinata.cloud/pinning/unpin/${cid}`;
+
+    const data = {
+      cidVersion: 0,
+    };
+
+    const headers = {
+      accept: "application/json",
+      pinata_api_key: process.env.NEXT_PUBLIC_PINATA_API_KEY,
+      pinata_secret_api_key: process.env.NEXT_PUBLIC_PINATA_SECRET,
+    };
+
+    try {
+      const response = await axios.delete(url, { data, headers });
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const uploadToIPFS = async (file: File, type: string) => {
     const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
 
@@ -526,6 +547,7 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
         fetchOffersByAddress,
         removeExpiredOffers,
         getWalletBalance,
+        removeFromIPFS,
       }}
     >
       {children}

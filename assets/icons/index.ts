@@ -26,6 +26,7 @@ import ProfileIcon from "./ProfileIcon";
 import ListNFTIcon from "./ListNFTIcon";
 import ListedNFTsIcon from "./ListedNFTsIcon";
 import WalletIcon from "./WalletIcon";
+import ThrashIcon from "./ThrashIcon";
 
 export {
   GithubIcon,
@@ -56,4 +57,5 @@ export {
   ListNFTIcon,
   ListedNFTsIcon,
   WalletIcon,
+  ThrashIcon,
 };
