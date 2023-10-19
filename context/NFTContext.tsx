@@ -489,6 +489,23 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
     await contract.removeExpiredOffers(tokenId);
   };
 
+  const getWalletBalance = async (): Promise<string> => {
+    try {
+      const web3Modal = new Web3Modal();
+      const connection = await web3Modal.connect();
+      const provider = new ethers.BrowserProvider(connection);
+      const signer = await provider.getSigner();
+
+      const balance = await provider.getBalance(signer);
+      const balanceInEther = ethers.formatEther(balance);
+
+      return balanceInEther;
+    } catch (error) {
+      console.error("Error fetching wallet balnce: ", error);
+      return "0";
+    }
+  };
+
   return (
     <NFTContextProvider
       value={{
@@ -508,6 +525,7 @@ export const NFTProvider = ({ children }: { children: ReactNode }) => {
         fetchOffersByTokenId,
         fetchOffersByAddress,
         removeExpiredOffers,
+        getWalletBalance,
       }}
     >
       {children}

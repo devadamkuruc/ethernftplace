@@ -29,9 +29,7 @@ const NFTCard = ({ nft, nftCurrency, classStyles, onClick, textXS }: Props) => {
       className={`flex flex-col col-span-1 cursor-pointer`}
       onClick={handleClick}
     >
-      <div
-        className={`relative overflow-hidden rounded-md ${classStyles} pb-[100%] `}
-      >
+      <div className={`relative overflow-hidden rounded-md ${classStyles} `}>
         <Image
           src={nft.image}
           alt={`nft`}

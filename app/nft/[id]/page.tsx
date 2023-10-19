@@ -39,9 +39,9 @@ const NFTDetail = ({ params }: { params: { id: number } }) => {
 
   if (NFT) {
     return (
-      <div className="flexCenter flex-col px-28 py-4 mt-8 mb-16 w-full">
+      <div className="flex-col px-28 py-4 mt-8 mb-16 w-full">
         <div className="flexCenter gap-10 w-full h-screen">
-          <div className="relative flex w-[50%] h-[85%] rounded-md overflow-hidden">
+          <div className="relative flex w-[45%] h-[85%] rounded-md overflow-hidden">
             <Image
               src={NFT.image}
               alt={NFT.name}
@@ -49,7 +49,7 @@ const NFTDetail = ({ params }: { params: { id: number } }) => {
               className="object-cover"
             />
           </div>
-          <div className="flex flex-col w-[50%] h-[85%] justify-start">
+          <div className="flex flex-col w-[55%] h-[85%] justify-start">
             <Link
               href={`/collection/${NFT.collectionId}`}
               className="text-ether-pink-1 hover:underline"

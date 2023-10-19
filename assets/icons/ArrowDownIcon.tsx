@@ -1,12 +1,14 @@
-interface Props {
-  classStyles: string;
+interface ArrowDownIconProps {
+  classStyles?: string;
+  height?: number;
+  width?: number;
 }
 
-const ArrowDownIcon = ({ classStyles }: Props) => {
+const ArrowDownIcon = ({ classStyles, height, width }: ArrowDownIconProps) => {
   return (
     <svg
-      width="8"
-      height="5"
+      width={width ? width : "8"}
+      height={height ? height : "5"}
       viewBox="0 0 6 4"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

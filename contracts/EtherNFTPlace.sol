@@ -49,6 +49,7 @@ contract EtherNFTPlace is ERC721URIStorage {
         address payable seller;
         address payable owner;
         uint256 price;
+        uint256 floorPrice;
         bool sold;
     }
 
@@ -57,6 +58,7 @@ contract EtherNFTPlace is ERC721URIStorage {
         address seller,
         address owner,
         uint256 price,
+        uint256 floorPrice,
         bool sold
     );
 
@@ -248,7 +250,7 @@ contract EtherNFTPlace is ERC721URIStorage {
         return nfts;
     }
 
-    function listNFTForSale(uint256 tokenId, uint256 salePrice) private {
+    function listNFTForSale(uint256 tokenId, uint256 salePrice, uint256 floorPrice) private {
         require(_exists(tokenId), "NFT does not exist");
         require(idToNFT[tokenId].owner == msg.sender, "Only item owner can perform this operation");
         require(salePrice > 0, "Price must be higher then 0");
@@ -262,15 +264,16 @@ contract EtherNFTPlace is ERC721URIStorage {
             seller: payable(msg.sender),
             owner: payable(address(this)),
             price: salePrice,
+            floorPrice: floorPrice,
             sold: false
         });
 
         _transfer(msg.sender, address(this), tokenId);
 
-        emit MarketItemCreated(tokenId, msg.sender, address(this), salePrice, false);
+        emit MarketItemCreated(tokenId, msg.sender, address(this), salePrice, floorPrice, false);
     }
 
-    function resellNFT(uint256 tokenId, uint256 price) public payable {
+    function resellNFT(uint256 tokenId, uint256 price, uint256 floorPrice) public payable {
         require(idToMarketItem[tokenId].owner == msg.sender, "Only item owner can perform this operation");
         require(idToNFT[tokenId].owner == msg.sender, "Only item owner can perform this operation");
         require(msg.value == listingPrice, "Price must be qual to listing price");
@@ -280,6 +283,7 @@ contract EtherNFTPlace is ERC721URIStorage {
 
         idToMarketItem[tokenId].sold = false;
         idToMarketItem[tokenId].price = price;
+        idToMarketItem[tokenId].floorPrice = floorPrice;
         idToMarketItem[tokenId].seller = payable(msg.sender);
         idToMarketItem[tokenId].owner = payable(address(this));
         

@@ -1,13 +1,15 @@
 interface Props {
   classStyles?: string;
-  onClick: () => void;
+  onClick?: () => void;
+  height?: number;
+  width?: number;
 }
 
-const ArrowUpIcon = ({ classStyles, onClick }: Props) => {
+const ArrowUpIcon = ({ classStyles, onClick, height, width }: Props) => {
   return (
     <svg
-      width="8"
-      height="5"
+      width={width ? width : "8"}
+      height={height ? height : "5"}
       viewBox="0 0 6 4"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

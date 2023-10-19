@@ -27,7 +27,6 @@ const OffersTable = () => {
   const currentDate = new Date();
 
   const timestamp = currentDate.getTime();
-  console.log(timestamp);
 
   const floorDifference = (floorPrice: number, price: number) => {
     const floorDifference = (price * 100) / floorPrice;
@@ -71,8 +70,6 @@ const OffersTable = () => {
       return "is expired";
     }
 
-    console.log(expirationDate, currentDate);
-
     if (differenceInDays === 0) {
       if (differenceInHours === 0) {
         return `in ${differenceInMinutes} minutes`;
@@ -93,13 +90,13 @@ const OffersTable = () => {
       </div>
       <div className="flex flex-col">
         <div className="grid grid-cols-12 border-b border-b-ether-grey-2 px-6 py-4">
-          <div className="col-span-3 text-ether-grey-5 text-xs">Price</div>
-          <div className="col-span-2 text-ether-grey-5 text-xs">USD Price</div>
-          <div className="col-span-3 text-ether-grey-5 text-xs">
+          <div className="col-span-3 text-ether-grey-5 text-sm">Price</div>
+          <div className="col-span-2 text-ether-grey-5 text-sm">USD Price</div>
+          <div className="col-span-3 text-ether-grey-5 text-sm">
             Floor Difference
           </div>
-          <div className="col-span-2 text-ether-grey-5 text-xs">Expiration</div>
-          <div className="col-span-2 text-ether-grey-5 text-xs">From</div>
+          <div className="col-span-2 text-ether-grey-5 text-sm">Expiration</div>
+          <div className="col-span-2 text-ether-grey-5 text-sm">From</div>
         </div>
         <div className="flex flex-col pb-6">
           {offers.map((offer, index) => (
@@ -108,23 +105,23 @@ const OffersTable = () => {
               className={`w-full cursor-pointer hover:bg-ether-grey-3 px-6`}
             >
               <div className="grid grid-cols-12 border-b border-b-ether-grey-2 items-center py-4">
-                <div className="col-span-3 text-white text-xs">
+                <div className="col-span-3 text-white text-sm">
                   {offer.price} {offer.currency}
                 </div>
-                <div className="col-span-2 text-white text-xs">
+                <div className="col-span-2 text-white text-sm">
                   ${offer.usdPrice}
                 </div>
-                <div className="col-span-3 text-white text-xs">
+                <div className="col-span-3 text-white text-sm">
                   {floorDifference(
                     offer.floorPrice,
                     offer.price
                   ).floorDifference.toFixed(2)}
                   % {floorDifference(offer.floorPrice, offer.price).floorSign}
                 </div>
-                <div className="col-span-2 text-white text-xs">
+                <div className="col-span-2 text-white text-sm">
                   {getExpiration(offer.timestamp)}
                 </div>
-                <div className="col-span-2 text-white text-xs">
+                <div className="col-span-2 text-white text-sm">
                   <div
                     className="hover:underline"
                     onClick={() => router.push(`/address/${offer.from}`)}
