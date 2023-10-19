@@ -97,7 +97,7 @@ const NFTsTable = ({ tableClassStyles, noCollection, nfts }: Props) => {
         )}
       </div>
       <div className="flex flex-col w-full rounded-md p-6">
-        <div className="grid grid-cols-8 gap-6">
+        <div className="grid grid-cols-12 gap-6">
           {nfts
             ? nfts.map((nft, index) => (
                 <NFTCard

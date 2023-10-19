@@ -22,7 +22,7 @@ const Input = ({
   const { nftCurrency } = useCurrentNFTContext();
 
   return (
-    <div className={`w-full ${classStyles}`}>
+    <div className={`w-full ${classStyles ? classStyles : ""}`}>
       <p className="text-white font-semibold text-lg">{title}</p>
 
       {inputType === "number" ? (
